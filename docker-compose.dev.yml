@@ -1,0 +1,103 @@
+name: sipos-dev
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+      args:
+        - UID=1000
+        - GID=1000
+    container_name: sipos_app_dev
+    user: "1000:1000"
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./docker/dev/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - XDEBUG_MODE=develop,debug
+    networks:
+      - sipos_network
+    depends_on:
+      - mariadb
+      - redis
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: sipos_nginx_dev
+    restart: unless-stopped
+    ports:
+      - "8180:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/dev/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - sipos_network
+    depends_on:
+      - app
+
+  mariadb:
+    image: mariadb:11
+    container_name: sipos_db_dev
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: secret
+      MARIADB_DATABASE: sipos_dev
+      MARIADB_USER: sipos
+      MARIADB_PASSWORD: sipos_password
+    volumes:
+      - sipos_db_dev_data:/var/lib/mysql
+      - ./docker/mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3307:3306"
+    networks:
+      - sipos_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: sipos_redis_dev
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    networks:
+      - sipos_network
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+      args:
+        - UID=1000
+        - GID=1000
+    container_name: sipos_worker_dev
+    user: "1000:1000"
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    command: php artisan queue:work redis --verbose --tries=3 --timeout=90
+    networks:
+      - sipos_network
+    depends_on:
+      - mariadb
+      - redis
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: sipos_mailpit_dev
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - sipos_network
+
+volumes:
+  sipos_db_dev_data:
+
+networks:
+  sipos_network:
+    driver: bridge
