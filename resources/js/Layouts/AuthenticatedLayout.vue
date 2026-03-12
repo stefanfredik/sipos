@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, watch, ref, h } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { useToast } from '@/Composables/useToast';
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 import {
     Sidebar,
     SidebarContent,
@@ -232,6 +239,24 @@ const laporanNavItems = computed<NavItem[]>(() => [
 function filterByRole(items: NavItem[]): NavItem[] {
     return items.filter((item) => hasRole(...item.roles));
 }
+
+// Mobile menu state
+const mobileMenuOpen = ref(false);
+
+// Render menu items for mobile
+function renderMenuItem(item: NavItem) {
+    return h(
+        'a',
+        {
+            href: route(item.route!),
+            class: `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted ${item.active ? 'bg-muted font-medium' : 'text-muted-foreground'}`,
+        },
+        [
+            h(item.icon, { class: 'h-4 w-4' }),
+            item.title,
+        ]
+    );
+}
 </script>
 
 <template>
@@ -453,8 +478,76 @@ function filterByRole(items: NavItem[]): NavItem[] {
         <SidebarInset>
             <!-- Top bar -->
             <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-                <SidebarTrigger class="-ml-1" />
-                <Separator orientation="vertical" class="mr-2 h-4" />
+                <!-- Mobile menu trigger -->
+                <Sheet v-model:open="mobileMenuOpen">
+                    <SheetTrigger as-child>
+                        <Button variant="ghost" size="icon" class="md:hidden h-8 w-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" class="w-72 p-0">
+                        <SheetHeader class="border-b px-4 py-3">
+                            <SheetTitle class="flex items-center gap-2">
+                                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                                    <Package2 class="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold">SIPOS</div>
+                                    <div class="text-xs text-muted-foreground">Posyandu Belumbang</div>
+                                </div>
+                            </SheetTitle>
+                        </SheetHeader>
+                        <div class="overflow-y-auto p-4">
+                            <!-- Main Menu -->
+                            <div class="mb-4">
+                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Menu Utama</div>
+                                <div class="space-y-1">
+                                    <a v-for="item in filterByRole(mainNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                        <component :is="item.icon" class="h-4 w-4" />
+                                        <span>{{ item.title }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Peserta Menu -->
+                            <div v-if="filterByRole(pesertaNavItems).length > 0" class="mb-4">
+                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Data Peserta</div>
+                                <div class="space-y-1">
+                                    <a v-for="item in filterByRole(pesertaNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                        <component :is="item.icon" class="h-4 w-4" />
+                                        <span>{{ item.title }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Master Data (Admin only) -->
+                            <div v-if="filterByRole(masterNavItems).length > 0" class="mb-4">
+                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Master Data</div>
+                                <div class="space-y-1">
+                                    <a v-for="item in filterByRole(masterNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                        <component :is="item.icon" class="h-4 w-4" />
+                                        <span>{{ item.title }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Laporan -->
+                            <div v-if="filterByRole(laporanNavItems).length > 0" class="mb-4">
+                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Laporan</div>
+                                <div class="space-y-1">
+                                    <a v-for="item in filterByRole(laporanNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                        <component :is="item.icon" class="h-4 w-4" />
+                                        <span>{{ item.title }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </SheetContent>
+                </Sheet>
+                
+                <!-- Desktop sidebar trigger -->
+                <SidebarTrigger class="-ml-1 hidden md:flex" />
+                <Separator orientation="vertical" class="mr-2 h-4 hidden md:block" />
                 <div class="flex-1">
                     <slot name="header" />
                 </div>

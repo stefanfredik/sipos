@@ -53,7 +53,7 @@ const form = useForm({
     tgl_lahir: data.tgl_lahir,
     kehamilan_keberapa: data.kehamilan_keberapa,
     jarak_anak: data.jarak_anak,
-    usia_kehajiban: data.usia_kehamilan,
+    usia_kehamilan: data.usia_kehamilan,
     no_telp: data.no_telp,
     alamat: data.alamat,
     keterangan: data.keterangan || '',

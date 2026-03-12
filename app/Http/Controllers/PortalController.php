@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\IbuHamilResource;
+use App\Http\Resources\BalitaResource;
+use App\Http\Resources\LansiaResource;
 use App\Models\IbuHamil;
 use App\Models\Balita;
 use App\Models\Lansia;
 use App\Models\JadwalPosyandu;
 use App\Models\JadwalStatus;
+use App\Models\Pemeriksaan;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,79 +31,26 @@ class PortalController extends Controller
         $peserta = null;
         $pesertaType = null;
         $riwayatPemeriksaan = [];
-        $grafikData = [];
+        $grafikData = ['labels' => [], 'beratBadan' => []];
         
         if ($ibuHamil) {
-            $peserta = $ibuHamil;
+            $peserta = new IbuHamilResource($ibuHamil);
             $pesertaType = 'ibu_hamil';
-            $riwayatPemeriksaan = $ibuHamil->pemeriksaan()
-                ->with('jadwal.posyandu')
-                ->latest('tgl_pemeriksaan')
-                ->take(10)
-                ->get()
-                ->map(fn ($p) => [
-                    'id' => $p->id,
-                    'tanggal' => $p->tgl_pemeriksaan->format('d/m/Y'),
-                    'usia_kehamilan' => $p->usia_kehamilan,
-                    'berat_badan' => $p->berat_badan,
-                    'lila' => $p->lila,
-                    'tensi_darah' => $p->tensi_darah,
-                    'posyandu_nama' => $p->jadwal?->posyandu?->nama_posyandu ?? '-',
-                    'keterangan' => $p->keterangan,
-                ]);
-            
-            $grafikData = [
-                'labels' => $riwayatPemeriksaan->pluck('tanggal')->reverse(),
-                'beratBadan' => $riwayatPemeriksaan->pluck('berat_badan')->reverse()->toArray(),
-                'lila' => $riwayatPemeriksaan->pluck('lila')->reverse()->toArray(),
-            ];
+            $pemeriksaanData = $this->getPemeriksaanData($ibuHamil, 'ibu_hamil');
+            $riwayatPemeriksaan = $pemeriksaanData['riwayat'];
+            $grafikData = $pemeriksaanData['grafik'];
         } elseif ($balita) {
-            $peserta = $balita;
+            $peserta = new BalitaResource($balita);
             $pesertaType = 'balita';
-            $riwayatPemeriksaan = $balita->pemeriksaan()
-                ->with('jadwal.posyandu')
-                ->latest('tgl_pemeriksaan')
-                ->take(10)
-                ->get()
-                ->map(fn ($p) => [
-                    'id' => $p->id,
-                    'tanggal' => $p->tgl_pemeriksaan->format('d/m/Y'),
-                    'berat_badan' => $p->berat_badan,
-                    'tinggi_badan' => $p->tinggi_badan,
-                    'lingkar_kepala' => $p->lingkar_kepala,
-                    'lila' => $p->lila,
-                    'posyandu_nama' => $p->jadwal?->posyandu?->nama_posyandu ?? '-',
-                    'keterangan' => $p->keterangan,
-                ]);
-            
-            $grafikData = [
-                'labels' => $riwayatPemeriksaan->pluck('tanggal')->reverse(),
-                'beratBadan' => $riwayatPemeriksaan->pluck('berat_badan')->reverse()->toArray(),
-                'tinggiBadan' => $riwayatPemeriksaan->pluck('tinggi_badan')->reverse()->toArray(),
-            ];
+            $pemeriksaanData = $this->getPemeriksaanData($balita, 'balita');
+            $riwayatPemeriksaan = $pemeriksaanData['riwayat'];
+            $grafikData = $pemeriksaanData['grafik'];
         } elseif ($lansia) {
-            $peserta = $lansia;
+            $peserta = new LansiaResource($lansia);
             $pesertaType = 'lansia';
-            $riwayatPemeriksaan = $lansia->pemeriksaan()
-                ->with('jadwal.posyandu')
-                ->latest('tgl_pemeriksaan')
-                ->take(10)
-                ->get()
-                ->map(fn ($p) => [
-                    'id' => $p->id,
-                    'tanggal' => $p->tgl_pemeriksaan->format('d/m/Y'),
-                    'berat_badan' => $p->berat_badan,
-                    'tinggi_badan' => $p->tinggi_badan,
-                    'tensi_darah' => $p->tensi_darah,
-                    'posyandu_nama' => $p->jadwal?->posyandu?->nama_posyandu ?? '-',
-                    'keterangan' => $p->keterangan,
-                ]);
-            
-            $grafikData = [
-                'labels' => $riwayatPemeriksaan->pluck('tanggal')->reverse(),
-                'beratBadan' => $riwayatPemeriksaan->pluck('berat_badan')->reverse()->toArray(),
-                'tensiSistole' => $riwayatPemeriksaan->pluck('tensi_darah')->reverse()->toArray(),
-            ];
+            $pemeriksaanData = $this->getPemeriksaanData($lansia, 'lansia');
+            $riwayatPemeriksaan = $pemeriksaanData['riwayat'];
+            $grafikData = $pemeriksaanData['grafik'];
         }
         
         // Get upcoming jadwal
@@ -133,38 +84,73 @@ class PortalController extends Controller
     {
         $user = auth()->user();
         
-        $peserta = $user->ibuHamil ?? $user->balita ?? $user->lansia;
-        $pesertaType = $user->ibuHamil ? 'ibu_hamil' : ($user->balita ? 'balita' : 'lansia');
+        $ibuHamil = $user->ibuHamil;
+        $balita = $user->balita;
+        $lansia = $user->lansia;
         
-        if (!$peserta) {
-            return Inertia::render('Portal/Kms', [
-                'peserta' => null,
-                'pesertaType' => null,
-                'riwayatPemeriksaan' => [],
-            ]);
+        $peserta = null;
+        $pesertaType = null;
+        $riwayatPemeriksaan = [];
+        
+        if ($ibuHamil) {
+            $peserta = new IbuHamilResource($ibuHamil);
+            $pesertaType = 'ibu_hamil';
+            $riwayatPemeriksaan = $this->getPemeriksaanData($ibuHamil, 'ibu_hamil')['riwayat'];
+        } elseif ($balita) {
+            $peserta = new BalitaResource($balita);
+            $pesertaType = 'balita';
+            $riwayatPemeriksaan = $this->getPemeriksaanData($balita, 'balita')['riwayat'];
+        } elseif ($lansia) {
+            $peserta = new LansiaResource($lansia);
+            $pesertaType = 'lansia';
+            $riwayatPemeriksaan = $this->getPemeriksaanData($lansia, 'lansia')['riwayat'];
         }
-        
-        $riwayatPemeriksaan = $peserta->pemeriksaan()
-            ->with('jadwal.posyandu')
-            ->orderBy('tgl_pemeriksaan', 'asc')
-            ->get()
-            ->map(fn ($p) => [
-                'id' => $p->id,
-                'tanggal' => $p->tgl_pemeriksaan->format('d/m/Y'),
-                'berat_badan' => $p->berat_badan,
-                'tinggi_badan' => $p->tinggi_badan,
-                'lila' => $p->lila,
-                'tensi_darah' => $p->tensi_darah,
-                'usia_kehamilan' => $p->usia_kehamilan,
-                'lingkar_kepala' => $p->lingkar_kepala,
-                'posyandu_nama' => $p->jadwal?->posyandu?->nama_posyandu ?? '-',
-                'keterangan' => $p->keterangan,
-            ]);
         
         return Inertia::render('Portal/Kms', [
             'peserta' => $peserta,
             'pesertaType' => $pesertaType,
             'riwayatPemeriksaan' => $riwayatPemeriksaan,
         ]);
+    }
+    
+    /**
+     * Get pemeriksaan data for peserta.
+     */
+    private function getPemeriksaanData(object $peserta, string $type): array
+    {
+        $pemeriksaan = $peserta->pemeriksaan()
+            ->with('jadwal.posyandu')
+            ->orderBy('tgl_pemeriksaan', 'desc')
+            ->take(10)
+            ->get();
+        
+        $riwayat = $pemeriksaan->map(fn ($p) => [
+            'id' => $p->id,
+            'tanggal' => $p->tgl_pemeriksaan->format('d/m/Y'),
+            'berat_badan' => $p->berat_badan,
+            'tinggi_badan' => $p->tinggi_badan,
+            'lila' => $p->lila,
+            'tensi_darah' => $p->tensi_darah,
+            'usia_kehamilan' => $p->usia_kehamilan,
+            'lingkar_kepala' => $p->lingkar_kepala,
+            'posyandu_nama' => $p->jadwal?->posyandu?->nama_posyandu ?? '-',
+            'keterangan' => $p->keterangan,
+        ])->toArray();
+        
+        $grafik = [
+            'labels' => $pemeriksaan->reverse()->pluck('tanggal')->map(fn ($t) => $t->format('d/m/Y'))->toArray(),
+            'beratBadan' => $pemeriksaan->reverse()->pluck('berat_badan')->toArray(),
+        ];
+        
+        if ($type === 'balita') {
+            $grafik['tinggiBadan'] = $pemeriksaan->reverse()->pluck('tinggi_badan')->toArray();
+        } elseif ($type === 'ibu_hamil') {
+            $grafik['lila'] = $pemeriksaan->reverse()->pluck('lila')->toArray();
+        }
+        
+        return [
+            'riwayat' => $riwayat,
+            'grafik' => $grafik,
+        ];
     }
 }

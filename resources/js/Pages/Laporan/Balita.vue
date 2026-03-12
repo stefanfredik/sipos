@@ -10,8 +10,8 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { reactive } from 'vue'
-import { Download, FileText } from 'lucide-vue-next'
+import { reactive, ref } from 'vue'
+import { Download, FileText, Loader2 } from 'lucide-vue-next'
 
 interface BalitaData {
     id: string
@@ -28,6 +28,9 @@ const props = defineProps<{
     filters: { posyandu_id?: string }
 }>()
 
+const exporting = ref(false)
+const exportType = ref<'pdf' | 'excel' | null>(null)
+
 const filterState = reactive({
     posyandu_id: props.filters.posyandu_id || 'all',
 })
@@ -39,6 +42,8 @@ function applyFilters() {
 }
 
 function exportPdf() {
+    exporting.value = true
+    exportType.value = 'pdf'
     const form = document.createElement('form')
     form.method = 'POST'
     form.action = route('laporan.export.pdf')
@@ -50,9 +55,12 @@ function exportPdf() {
     type.type = 'hidden'; type.name = 'type'; type.value = 'balita'
     form.appendChild(type)
     document.body.appendChild(form); form.submit(); document.body.removeChild(form)
+    setTimeout(() => { exporting.value = false; exportType.value = null }, 3000)
 }
 
 function exportExcel() {
+    exporting.value = true
+    exportType.value = 'excel'
     const form = document.createElement('form')
     form.method = 'POST'
     form.action = route('laporan.export.excel')
@@ -64,6 +72,7 @@ function exportExcel() {
     type.type = 'hidden'; type.name = 'type'; type.value = 'balita'
     form.appendChild(type)
     document.body.appendChild(form); form.submit(); document.body.removeChild(form)
+    setTimeout(() => { exporting.value = false; exportType.value = null }, 3000)
 }
 </script>
 
@@ -75,11 +84,13 @@ function exportExcel() {
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold">Laporan Balita</h2>
                 <div class="flex gap-2">
-                    <Button variant="outline" size="sm" @click="exportPdf">
-                        <FileText class="mr-2 h-4 w-4" /> Export PDF
+                    <Button variant="outline" size="sm" @click="exportPdf" :disabled="exporting">
+                        <Loader2 v-if="exporting && exportType === 'pdf'" class="mr-2 h-4 w-4 animate-spin" />
+                        <FileText v-else class="mr-2 h-4 w-4" /> Export {{ exporting && exportType === 'pdf' ? 'ing...' : 'PDF' }}
                     </Button>
-                    <Button size="sm" @click="exportExcel">
-                        <Download class="mr-2 h-4 w-4" /> Export Excel
+                    <Button size="sm" @click="exportExcel" :disabled="exporting">
+                        <Loader2 v-if="exporting && exportType === 'excel'" class="mr-2 h-4 w-4 animate-spin" />
+                        <Download v-else class="mr-2 h-4 w-4" /> Export {{ exporting && exportType === 'excel' ? 'ing...' : 'Excel' }}
                     </Button>
                 </div>
             </div>

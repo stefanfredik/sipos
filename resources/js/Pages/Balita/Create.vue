@@ -20,7 +20,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { ArrowLeft, Loader, Loader2, Save } from 'lucide-vue-next';
+import { ArrowLeft, Loader2, Save } from 'lucide-vue-next';
+import { useToast } from '@/Composables/useToast';
+
+const toast = useToast();
 
 const form = useForm({
     nik: '',
@@ -37,6 +40,12 @@ const form = useForm({
 const submit = () => {
     form.post(route('balita.store'), {
         forceFormData: true,
+        onSuccess: () => {
+            toast.success('Berhasil', 'Data balita berhasil ditambahkan.');
+        },
+        onError: () => {
+            toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.');
+        },
     });
 };
 </script>
@@ -52,20 +61,24 @@ const submit = () => {
                         <ArrowLeft class="h-4 w-4" />
                     </Button>
                 </Link>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Tambah Balita</h2>
+                <h2 class="text-xl leading-tight font-semibold text-gray-800">
+                    Tambah Balita
+                </h2>
             </div>
         </template>
 
         <div class="py-12">
-            <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
                 <Card>
                     <CardHeader>
                         <CardTitle>Formulir Pendaftaran</CardTitle>
-                        <CardDescription>Lengkapi data balita di bawah ini.</CardDescription>
+                        <CardDescription
+                            >Lengkapi data balita di bawah ini.</CardDescription
+                        >
                     </CardHeader>
                     <form @submit.prevent="submit">
                         <CardContent class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div class="space-y-2">
                                     <Label for="nik">NIK (16 Digit)</Label>
                                     <Input
@@ -73,9 +86,17 @@ const submit = () => {
                                         v-model="form.nik"
                                         maxlength="16"
                                         required
-                                        :class="{ 'border-destructive': form.errors.nik }"
+                                        :class="{
+                                            'border-destructive':
+                                                form.errors.nik,
+                                        }"
                                     />
-                                    <p v-if="form.errors.nik" class="text-sm text-destructive">{{ form.errors.nik }}</p>
+                                    <p
+                                        v-if="form.errors.nik"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ form.errors.nik }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
@@ -84,20 +105,38 @@ const submit = () => {
                                         id="nama"
                                         v-model="form.nama"
                                         required
-                                        :class="{ 'border-destructive': form.errors.nama }"
+                                        :class="{
+                                            'border-destructive':
+                                                form.errors.nama,
+                                        }"
                                     />
-                                    <p v-if="form.errors.nama" class="text-sm text-destructive">{{ form.errors.nama }}</p>
+                                    <p
+                                        v-if="form.errors.nama"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ form.errors.nama }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="nama_orang_tua">Nama Orang Tua / Wali</Label>
+                                    <Label for="nama_orang_tua"
+                                        >Nama Orang Tua / Wali</Label
+                                    >
                                     <Input
                                         id="nama_orang_tua"
                                         v-model="form.nama_orang_tua"
                                         required
-                                        :class="{ 'border-destructive': form.errors.nama_orang_tua }"
+                                        :class="{
+                                            'border-destructive':
+                                                form.errors.nama_orang_tua,
+                                        }"
                                     />
-                                    <p v-if="form.errors.nama_orang_tua" class="text-sm text-destructive">{{ form.errors.nama_orang_tua }}</p>
+                                    <p
+                                        v-if="form.errors.nama_orang_tua"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ form.errors.nama_orang_tua }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
@@ -107,34 +146,70 @@ const submit = () => {
                                         type="date"
                                         v-model="form.tgl_lahir"
                                         required
-                                        :class="{ 'border-destructive': form.errors.tgl_lahir }"
+                                        :class="{
+                                            'border-destructive':
+                                                form.errors.tgl_lahir,
+                                        }"
                                     />
-                                    <p v-if="form.errors.tgl_lahir" class="text-sm text-destructive">{{ form.errors.tgl_lahir }}</p>
+                                    <p
+                                        v-if="form.errors.tgl_lahir"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ form.errors.tgl_lahir }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="jenis_kelamin">Jenis Kelamin</Label>
+                                    <Label for="jenis_kelamin"
+                                        >Jenis Kelamin</Label
+                                    >
                                     <Select v-model="form.jenis_kelamin">
-                                        <SelectTrigger :class="{ 'border-destructive': form.errors.jenis_kelamin }">
-                                            <SelectValue placeholder="Pilih Jenis Kelamin" />
+                                        <SelectTrigger
+                                            :class="{
+                                                'border-destructive':
+                                                    form.errors.jenis_kelamin,
+                                            }"
+                                        >
+                                            <SelectValue
+                                                placeholder="Pilih Jenis Kelamin"
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="L">Laki-laki</SelectItem>
-                                            <SelectItem value="P">Perempuan</SelectItem>
+                                            <SelectItem value="L"
+                                                >Laki-laki</SelectItem
+                                            >
+                                            <SelectItem value="P"
+                                                >Perempuan</SelectItem
+                                            >
                                         </SelectContent>
                                     </Select>
-                                    <p v-if="form.errors.jenis_kelamin" class="text-sm text-destructive">{{ form.errors.jenis_kelamin }}</p>
+                                    <p
+                                        v-if="form.errors.jenis_kelamin"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ form.errors.jenis_kelamin }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="no_telp">No. Telepon Orang Tua</Label>
+                                    <Label for="no_telp"
+                                        >No. Telepon Orang Tua</Label
+                                    >
                                     <Input
                                         id="no_telp"
                                         v-model="form.no_telp"
                                         required
-                                        :class="{ 'border-destructive': form.errors.no_telp }"
+                                        :class="{
+                                            'border-destructive':
+                                                form.errors.no_telp,
+                                        }"
                                     />
-                                    <p v-if="form.errors.no_telp" class="text-sm text-destructive">{{ form.errors.no_telp }}</p>
+                                    <p
+                                        v-if="form.errors.no_telp"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ form.errors.no_telp }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
@@ -143,10 +218,23 @@ const submit = () => {
                                         id="foto"
                                         type="file"
                                         accept="image/*"
-                                        @input="form.foto = ($event.target as HTMLInputElement).files?.[0] || null"
-                                        :class="{ 'border-destructive': form.errors.foto }"
+                                        @input="
+                                            form.foto =
+                                                (
+                                                    $event.target as HTMLInputElement
+                                                ).files?.[0] || null
+                                        "
+                                        :class="{
+                                            'border-destructive':
+                                                form.errors.foto,
+                                        }"
                                     />
-                                    <p v-if="form.errors.foto" class="text-sm text-destructive">{{ form.errors.foto }}</p>
+                                    <p
+                                        v-if="form.errors.foto"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ form.errors.foto }}
+                                    </p>
                                 </div>
                             </div>
 
@@ -156,28 +244,53 @@ const submit = () => {
                                     id="alamat"
                                     v-model="form.alamat"
                                     required
-                                    :class="{ 'border-destructive': form.errors.alamat }"
+                                    :class="{
+                                        'border-destructive':
+                                            form.errors.alamat,
+                                    }"
                                 />
-                                <p v-if="form.errors.alamat" class="text-sm text-destructive">{{ form.errors.alamat }}</p>
+                                <p
+                                    v-if="form.errors.alamat"
+                                    class="text-sm text-destructive"
+                                >
+                                    {{ form.errors.alamat }}
+                                </p>
                             </div>
 
                             <div class="space-y-2">
-                                <Label for="keterangan">Keterangan Tambahan (Opsional)</Label>
+                                <Label for="keterangan"
+                                    >Keterangan Tambahan (Opsional)</Label
+                                >
                                 <Textarea
                                     id="keterangan"
                                     v-model="form.keterangan"
                                     placeholder="Contoh: Riwayat imunisasi, alergi, dll."
-                                    :class="{ 'border-destructive': form.errors.keterangan }"
+                                    :class="{
+                                        'border-destructive':
+                                            form.errors.keterangan,
+                                    }"
                                 />
-                                <p v-if="form.errors.keterangan" class="text-sm text-destructive">{{ form.errors.keterangan }}</p>
+                                <p
+                                    v-if="form.errors.keterangan"
+                                    class="text-sm text-destructive"
+                                >
+                                    {{ form.errors.keterangan }}
+                                </p>
                             </div>
                         </CardContent>
-                        <CardFooter class="flex justify-end gap-4 border-t px-6 py-4">
+                        <CardFooter
+                            class="flex justify-end gap-4 border-t px-6 py-4"
+                        >
                             <Link :href="route('balita.index')">
-                                <Button variant="ghost" type="button">Batal</Button>
+                                <Button variant="ghost" type="button"
+                                    >Batal</Button
+                                >
                             </Link>
                             <Button type="submit" :disabled="form.processing">
-                                <Loader2 v-if="form.processing" class="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2
+                                    v-if="form.processing"
+                                    class="mr-2 h-4 w-4 animate-spin"
+                                />
                                 <Save v-else class="mr-2 h-4 w-4" />
                                 Simpan Data
                             </Button>

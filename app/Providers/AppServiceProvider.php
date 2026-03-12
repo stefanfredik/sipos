@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\IbuHamil;
+use App\Models\Balita;
+use App\Models\Lansia;
 use App\Models\JadwalPosyandu;
+use App\Models\Pemeriksaan;
+use App\Models\User;
+use App\Observers\AuditObserver;
 use App\Policies\JadwalPosyanduPolicy;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
@@ -35,9 +41,16 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('laporan.exportExcel', [\App\Policies\LaporanPolicy::class, 'exportExcel']);
 
         Relation::morphMap([
-            'ibu_hamil' => \App\Models\IbuHamil::class,
-            'balita' => \App\Models\Balita::class,
-            'lansia' => \App\Models\Lansia::class,
+            'ibu_hamil' => IbuHamil::class,
+            'balita' => Balita::class,
+            'lansia' => Lansia::class,
         ]);
+
+        // Register audit observer for sensitive models
+        IbuHamil::observe(AuditObserver::class);
+        Balita::observe(AuditObserver::class);
+        Lansia::observe(AuditObserver::class);
+        Pemeriksaan::observe(AuditObserver::class);
+        User::observe(AuditObserver::class);
     }
 }

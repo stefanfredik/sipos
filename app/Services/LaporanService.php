@@ -242,6 +242,50 @@ class LaporanService
             'hipertensi_count' => $hipertensiCount,
         ];
     }
+    
+    /**
+     * Get jadwal that need validation (for bidan dashboard).
+     */
+    public function getJadwalValidationQueue(): \Illuminate\Support\Collection
+    {
+        return JadwalPosyandu::with('posyandu', 'kader')
+            ->where('status', JadwalStatus::Draft)
+            ->orderBy('created_at', 'asc')
+            ->take(5)
+            ->get()
+            ->map(fn ($j) => [
+                'id' => $j->id,
+                'posyandu_nama' => $j->posyandu?->nama_posyandu ?? '-',
+                'kader_nama' => $j->kader?->nama_kader ?? '-',
+                'tanggal' => $j->tanggal->format('d/m/Y'),
+                'created_at' => $j->created_at->format('d/m/Y H:i'),
+            ]);
+    }
+    
+    /**
+     * Get jadwal for kader's posyandu (for kader dashboard).
+     */
+    public function getMyPosyanduJadwal($kader): \Illuminate\Support\Collection
+    {
+        if (!$kader) {
+            return collect([]);
+        }
+        
+        return JadwalPosyandu::with('posyandu')
+            ->whereHas('posyandu', fn ($q) => $q->where('kader_id', $kader->id))
+            ->where('tanggal', '>=', now()->toDateString())
+            ->orderBy('tanggal', 'asc')
+            ->take(5)
+            ->get()
+            ->map(fn ($j) => [
+                'id' => $j->id,
+                'posyandu_nama' => $j->posyandu?->nama_posyandu ?? '-',
+                'tanggal' => $j->tanggal->format('d/m/Y'),
+                'waktu' => "{$j->waktu_mulai} - " . ($j->waktu_selesai ?? 'Selesai'),
+                'status' => $j->status->value,
+                'status_label' => $j->status->label(),
+            ]);
+    }
 
     private function getPesertaTypeLabel(string $type): string
     {

@@ -35,8 +35,9 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+        // Redirect peserta to portal, others to dashboard
         if ($user->isPeserta()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('portal.index', absolute: false));
         }
 
         return redirect()->intended(route('dashboard', absolute: false));

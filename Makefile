@@ -38,6 +38,12 @@ analyze:
 migrate:
 	@$(APP) php artisan migrate
 
+migrate-fresh:
+	@$(APP) php artisan migrate:fresh --seed
+
+seed:
+	@$(APP) php artisan db:seed
+
 dev:
 	@$(APP) npm run dev
 

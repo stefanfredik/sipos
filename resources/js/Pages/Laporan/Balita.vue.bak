@@ -10,39 +10,35 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { reactive, ref } from 'vue'
-import { Download, FileText, Loader2 } from 'lucide-vue-next'
+import { reactive } from 'vue'
+import { Download, FileText } from 'lucide-vue-next'
 
-interface LansiaData {
+interface BalitaData {
     id: string
     nik: string
     nama: string
+    nama_orang_tua: string
     jenis_kelamin: string
     is_active: boolean
 }
 
 const props = defineProps<{
-    data: LansiaData[]
+    data: BalitaData[]
     posyandu: Array<{ id: string; nama_posyandu: string }>
     filters: { posyandu_id?: string }
 }>()
-
-const exporting = ref(false)
-const exportType = ref<'pdf' | 'excel' | null>(null)
 
 const filterState = reactive({
     posyandu_id: props.filters.posyandu_id || 'all',
 })
 
 function applyFilters() {
-    router.get(route('laporan.lansia'), {
+    router.get(route('laporan.balita'), {
         posyandu_id: filterState.posyandu_id === 'all' ? null : filterState.posyandu_id,
     }, { preserveState: true })
 }
 
 function exportPdf() {
-    exporting.value = true
-    exportType.value = 'pdf'
     const form = document.createElement('form')
     form.method = 'POST'
     form.action = route('laporan.export.pdf')
@@ -51,15 +47,12 @@ function exportPdf() {
     csrf.value = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
     form.appendChild(csrf)
     const type = document.createElement('input')
-    type.type = 'hidden'; type.name = 'type'; type.value = 'lansia'
+    type.type = 'hidden'; type.name = 'type'; type.value = 'balita'
     form.appendChild(type)
     document.body.appendChild(form); form.submit(); document.body.removeChild(form)
-    setTimeout(() => { exporting.value = false; exportType.value = null }, 3000)
 }
 
 function exportExcel() {
-    exporting.value = true
-    exportType.value = 'excel'
     const form = document.createElement('form')
     form.method = 'POST'
     form.action = route('laporan.export.excel')
@@ -68,28 +61,25 @@ function exportExcel() {
     csrf.value = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
     form.appendChild(csrf)
     const type = document.createElement('input')
-    type.type = 'hidden'; type.name = 'type'; type.value = 'lansia'
+    type.type = 'hidden'; type.name = 'type'; type.value = 'balita'
     form.appendChild(type)
     document.body.appendChild(form); form.submit(); document.body.removeChild(form)
-    setTimeout(() => { exporting.value = false; exportType.value = null }, 3000)
 }
 </script>
 
 <template>
-    <Head title="Laporan Lansia" />
+    <Head title="Laporan Balita" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="text-lg font-semibold">Laporan Lansia</h2>
+                <h2 class="text-lg font-semibold">Laporan Balita</h2>
                 <div class="flex gap-2">
-                    <Button variant="outline" size="sm" @click="exportPdf" :disabled="exporting">
-                        <Loader2 v-if="exporting && exportType === 'pdf'" class="mr-2 h-4 w-4 animate-spin" />
-                        <FileText v-else class="mr-2 h-4 w-4" /> Export {{ exporting && exportType === 'pdf' ? 'ing...' : 'PDF' }}
+                    <Button variant="outline" size="sm" @click="exportPdf">
+                        <FileText class="mr-2 h-4 w-4" /> Export PDF
                     </Button>
-                    <Button size="sm" @click="exportExcel" :disabled="exporting">
-                        <Loader2 v-if="exporting && exportType === 'excel'" class="mr-2 h-4 w-4 animate-spin" />
-                        <Download v-else class="mr-2 h-4 w-4" /> Export {{ exporting && exportType === 'excel' ? 'ing...' : 'Excel' }}
+                    <Button size="sm" @click="exportExcel">
+                        <Download class="mr-2 h-4 w-4" /> Export Excel
                     </Button>
                 </div>
             </div>
@@ -122,6 +112,7 @@ function exportExcel() {
                             <TableHead class="w-12 text-center">No</TableHead>
                             <TableHead>NIK</TableHead>
                             <TableHead>Nama</TableHead>
+                            <TableHead>Orang Tua</TableHead>
                             <TableHead class="text-center">JK</TableHead>
                             <TableHead class="text-center">Status</TableHead>
                         </TableRow>
@@ -131,6 +122,7 @@ function exportExcel() {
                             <TableCell class="text-center text-muted-foreground">{{ i + 1 }}</TableCell>
                             <TableCell class="font-mono text-xs">{{ item.nik }}</TableCell>
                             <TableCell class="font-medium">{{ item.nama }}</TableCell>
+                            <TableCell class="text-muted-foreground">{{ item.nama_orang_tua }}</TableCell>
                             <TableCell class="text-center">
                                 <Badge variant="outline">{{ item.jenis_kelamin === 'L' ? 'L' : 'P' }}</Badge>
                             </TableCell>
@@ -141,7 +133,7 @@ function exportExcel() {
                             </TableCell>
                         </TableRow>
                         <TableRow v-if="data.length === 0">
-                            <TableCell colspan="5" class="h-24 text-center text-muted-foreground">Tidak ada data lansia</TableCell>
+                            <TableCell colspan="6" class="h-24 text-center text-muted-foreground">Tidak ada data balita</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
