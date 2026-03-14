@@ -24,7 +24,7 @@ const form = useForm({
     foto: null as File | null,
     tgl_lahir: '',
     kehamilan_keberapa: 1,
-    jarak_anak: null as number | null,
+    jarak_anak: undefined as number | undefined,
     usia_kehamilan: 0,
     no_telp: '',
     alamat: '',

@@ -169,7 +169,7 @@ const submit = () => {
 
                                 <div class="space-y-2">
                                     <Label for="is_active">Status Peserta</Label>
-                                    <Select v-model="form.is_active" @update:modelValue="(v) => form.is_active = v === 'true'">
+                                    <Select :model-value="String(form.is_active)" @update:modelValue="(v: any) => form.is_active = v === 'true'">
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Status" />
                                         </SelectTrigger>

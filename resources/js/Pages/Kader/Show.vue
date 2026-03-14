@@ -35,7 +35,7 @@ const deleteKader = () => {
 </script>
 
 <template>
-    <Head :title="'Profil Kader - ' + kader.nama_kader" />
+    <Head :title="'Profil Kader - ' + kader.nama" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -69,10 +69,10 @@ const deleteKader = () => {
                     <Card class="md:col-span-1">
                         <CardContent class="pt-6 flex flex-col items-center text-center">
                             <div class="h-32 w-32 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-4 mb-4">
-                                <img v-if="kader.foto" :src="kader.foto" :alt="kader.nama_kader" class="h-full w-full object-cover" />
+                                <img v-if="kader.foto" :src="kader.foto" :alt="kader.nama" class="h-full w-full object-cover" />
                                 <User v-else class="h-16 w-16 text-gray-400" />
                             </div>
-                            <h3 class="text-xl font-bold">{{ kader.nama_kader }}</h3>
+                            <h3 class="text-xl font-bold">{{ kader.nama }}</h3>
                             <p class="text-sm text-muted-foreground mb-4">@{{ kader.username }}</p>
                             <Badge variant="outline" class="mb-4">Kader Posyandu</Badge>
                         </CardContent>

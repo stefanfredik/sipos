@@ -10,7 +10,7 @@ defineProps<{
     status?: String;
 }>();
 
-const user = usePage().props.auth.user;
+const user = (usePage().props as any).auth?.user;
 
 const form = useForm({
     nama_user: user.nama_user,

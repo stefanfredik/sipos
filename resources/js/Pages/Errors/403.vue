@@ -10,6 +10,10 @@ defineProps<{
     title?: string
     description?: string
 }>()
+
+const goBack = () => {
+    window.history.back()
+}
 </script>
 
 <template>
@@ -33,7 +37,7 @@ defineProps<{
                                 Kembali ke Dashboard
                             </Button>
                         </Link>
-                        <Button variant="outline" @click="$router.back()">
+                        <Button variant="outline" @click="goBack">
                             <ArrowLeft class="mr-2 h-4 w-4" />
                             Kembali
                         </Button>

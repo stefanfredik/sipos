@@ -40,14 +40,11 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.put(route('posyandu.update', props.posyandu.id), {
+    form.transform((data) => ({
+        ...data,
+        is_active: data.is_active === 'true',
+    })).put(route('posyandu.update', props.posyandu.id), {
         preserveScroll: true,
-        data: {
-            nama_posyandu: form.nama_posyandu,
-            lokasi: form.lokasi,
-            deskripsi: form.deskripsi,
-            is_active: form.is_active === 'true',
-        },
     });
 };
 </script>
@@ -100,7 +97,7 @@ const submit = () => {
 
                             <div class="space-y-2">
                                 <Label for="is_active">Status Aktif</Label>
-                                <Select v-model="form.is_active" @update:modelValue="(v) => form.is_active = v === 'true'">
+                                <Select v-model="form.is_active">
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih Status" />
                                     </SelectTrigger>

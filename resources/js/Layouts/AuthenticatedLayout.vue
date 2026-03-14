@@ -68,7 +68,7 @@ import { Badge } from '@/components/ui/badge';
 import { Toaster } from '@/components/ui/sonner';
 
 const page = usePage();
-const user = computed(() => page.props.auth?.user as any);
+const user = computed(() => (page.props as any).auth?.user);
 const role = computed(() => user.value?.role);
 const unreadNotifications = computed(
     () => (page.props as any).unreadNotifications || 0,

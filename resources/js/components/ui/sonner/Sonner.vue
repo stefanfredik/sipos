@@ -4,7 +4,7 @@ import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon
 import { Toaster as Sonner } from "vue-sonner"
 import { cn } from "@/lib/utils"
 
-const props = defineProps<ToasterProps>()
+defineProps<ToasterProps>()
 </script>
 
 <template>
@@ -17,7 +17,6 @@ const props = defineProps<ToasterProps>()
       '--border-radius': 'var(--radius)',
     }"
     position="top-right"
-    v-bind="props"
   >
     <template #success-icon>
       <CircleCheckIcon class="size-4" />

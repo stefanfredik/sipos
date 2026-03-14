@@ -10,6 +10,10 @@ defineProps<{
     title?: string
     description?: string
 }>()
+
+const reloadPage = () => {
+    window.location.reload()
+}
 </script>
 
 <template>
@@ -33,7 +37,7 @@ defineProps<{
                                 Kembali ke Dashboard
                             </Button>
                         </Link>
-                        <Button variant="outline" @click="window.location.reload()">
+                        <Button variant="outline" @click="reloadPage">
                             <RefreshCw class="mr-2 h-4 w-4" />
                             Refresh
                         </Button>

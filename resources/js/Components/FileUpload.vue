@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Upload, X } from 'lucide-vue-next'
-import { Button } from '@/Components/ui/button'
+import { Button } from '@/components/ui/button'
 
 interface Props {
     modelValue?: File | null

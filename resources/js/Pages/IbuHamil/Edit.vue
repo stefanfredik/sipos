@@ -208,9 +208,9 @@ const submit = () => {
                                         >Status Peserta</Label
                                     >
                                     <Select
-                                        v-model="form.is_active"
+                                        :model-value="String(form.is_active)"
                                         @update:modelValue="
-                                            (v) =>
+                                            (v: any) =>
                                                 (form.is_active = v === 'true')
                                         "
                                     >

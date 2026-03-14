@@ -153,13 +153,13 @@ const chartOptions = {
 };
 
 const processedChartData = computed(() => ({
-    labels: props.chartData.map((d) => d.month),
+    labels: (props.chartData ?? []).map((d) => d.month),
     datasets: [
         {
             label: 'Total Pemeriksaan',
             backgroundColor: 'hsl(var(--primary) / 0.1)',
             borderColor: 'hsl(var(--primary))',
-            data: props.chartData.map((d) => d.total),
+            data: (props.chartData ?? []).map((d) => d.total),
             fill: true,
             tension: 0.4,
         },
@@ -169,28 +169,28 @@ const processedChartData = computed(() => ({
 const statCards = computed(() => [
     {
         title: 'Total Balita',
-        value: props.stats.total_balita,
+        value: props.stats?.total_balita ?? 0,
         icon: Baby,
         desc: 'Aktif terpantau',
         variant: 'default' as const,
     },
     {
         title: 'Ibu Hamil',
-        value: props.stats.total_bumil,
+        value: props.stats?.total_bumil ?? 0,
         icon: User,
         desc: 'Pemeriksaan rutin',
         variant: 'default' as const,
     },
     {
         title: 'Lansia',
-        value: props.stats.total_lansia,
+        value: props.stats?.total_lansia ?? 0,
         icon: Users,
         desc: 'Kesehatan berkala',
         variant: 'default' as const,
     },
     {
         title: 'Periksa Bulan Ini',
-        value: props.stats.pemeriksaan_bulan_ini,
+        value: props.stats?.pemeriksaan_bulan_ini ?? 0,
         icon: Activity,
         desc: 'Total kunjungan',
         variant: 'primary' as const,

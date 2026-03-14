@@ -88,7 +88,7 @@ const prepareChartData = (field: keyof RiwayatPemeriksaan) => {
                        field === 'lila' ? 'LILA (cm)' : 'Tensi',
                 backgroundColor: 'hsl(var(--primary) / 0.1)',
                 borderColor: 'hsl(var(--primary))',
-                data: props.riwayatPemeriksaan.map(p => p[field]),
+                data: props.riwayatPemeriksaan.map(p => Number(p[field]) || null),
                 fill: true,
                 tension: 0.4,
             },

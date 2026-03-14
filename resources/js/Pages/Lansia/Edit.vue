@@ -272,13 +272,10 @@ const submit = () => {
                                         >Status Peserta</Label
                                     >
                                     <Select
-                                        v-model="form.is_active"
+                                        :model-value="String(form.is_active)"
                                         @update:modelValue="
-                                            (v) => {
-                                                if (typeof v === 'string')
-                                                    form.is_active =
-                                                        v === 'true';
-                                            }
+                                            (v: any) =>
+                                                (form.is_active = v === 'true')
                                         "
                                     >
                                         <SelectTrigger
