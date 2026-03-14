@@ -20,14 +20,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import SearchableSelect from '@/components/ui/SearchableSelect.vue';
 import { ArrowLeft, Loader2, Save } from 'lucide-vue-next';
 import { useToast } from '@/Composables/useToast';
 
-defineProps<{
+const props = defineProps<{
     available_users: Array<{ id: string; nama_user: string; email: string }>;
 }>();
 
 const toast = useToast();
+
+const userOptions = props.available_users.map((u) => ({
+    id: u.id,
+    label: `${u.nama_user} (${u.email})`,
+}));
 
 const form = useForm({
     user_id: '',
@@ -50,8 +56,8 @@ const submit = () => {
     });
 };
 
-const onUserChange = (userId: string, users: any[]) => {
-    const selected = users.find((u) => u.id === userId);
+const onUserChange = (userId: string) => {
+    const selected = props.available_users.find((u) => u.id === userId);
     if (selected) {
         form.nama_bidan = selected.nama_user;
     }
@@ -88,44 +94,14 @@ const onUserChange = (userId: string, users: any[]) => {
                     <form @submit.prevent="submit">
                         <CardContent class="space-y-6">
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div class="space-y-2">
-                                    <Label for="user_id">Pilih Akun User</Label>
-                                    <Select
-                                        v-model="form.user_id"
-                                        @update:modelValue="
-                                            (v) =>
-                                                onUserChange(v, available_users)
-                                        "
-                                    >
-                                        <SelectTrigger
-                                            :class="{
-                                                'border-destructive':
-                                                    form.errors.user_id,
-                                            }"
-                                        >
-                                            <SelectValue
-                                                placeholder="Pilih Akun"
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem
-                                                v-for="u in available_users"
-                                                :key="u.id"
-                                                :value="u.id"
-                                            >
-                                                {{ u.nama_user }} ({{
-                                                    u.email
-                                                }})
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <p
-                                        v-if="form.errors.user_id"
-                                        class="text-sm text-destructive"
-                                    >
-                                        {{ form.errors.user_id }}
-                                    </p>
-                                </div>
+                                <SearchableSelect
+                                    v-model="form.user_id"
+                                    :options="userOptions"
+                                    placeholder="Pilih Akun User"
+                                    label="Pilih Akun User"
+                                    :error="form.errors.user_id"
+                                    @update:modelValue="onUserChange"
+                                />
 
                                 <div class="space-y-2">
                                     <Label for="nama_bidan"

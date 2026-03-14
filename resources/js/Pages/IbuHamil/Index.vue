@@ -68,30 +68,6 @@ function deleteIbuHamil(id: string) {
         });
     }
 }
-
-const props = defineProps<{
-    ibu_hamil: { data: IbuHamil[]; links: any[]; meta: any };
-    filters: { search?: string; is_active?: string };
-}>();
-
-const search = ref(props.filters.search || '');
-
-watch(
-    search,
-    debounce((value: string) => {
-        router.get(
-            route('ibu-hamil.index'),
-            { search: value },
-            { preserveState: true, replace: true },
-        );
-    }, 500),
-);
-
-function deleteIbuHamil(id: string) {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-        router.delete(route('ibu-hamil.destroy', id));
-    }
-}
 </script>
 
 <template>

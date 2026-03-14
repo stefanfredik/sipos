@@ -611,7 +611,7 @@
   - `exportPdf(request)` — stream PDF download
   - `exportExcel(request)` — stream Excel download
 - [x] **6.4.2** Daftarkan routes laporan
-- [ ] **6.4.3** Gunakan job Queue untuk generate laporan besar (> 100 record)
+- [x] **6.4.3** Gunakan job Queue untuk generate laporan besar (> 100 record)
 
 ### 6.5 Frontend — Laporan
 
@@ -622,12 +622,12 @@
 - [x] **6.5.5** Buat `Pages/Laporan/Bulanan.vue`
 - [x] **6.5.6** Implementasi filter: periode (bulan/tahun), posyandu
 - [x] **6.5.7** Implementasi tombol "Export PDF" dan "Export Excel"
-- [ ] **6.5.8** Implementasi loading state saat export
+- [x] **6.5.8** Implementasi loading state saat export
 
 ### 6.6 Dashboard
 
 - [x] **6.6.1** Buat `DashboardController.php` → kirim data statistik ke Inertia
-- [ ] **6.6.2** Buat `Pages/Dashboard.vue`:
+- [x] **6.6.2** Buat `Pages/Dashboard.vue`:
   - StatCard: Total Ibu Hamil Aktif
   - StatCard: Total Balita Aktif
   - StatCard: Total Lansia Aktif
@@ -636,7 +636,7 @@
   - Grafik: Trend kehadiran per bulan (Line Chart)
   - Tabel: Jadwal posyandu berikutnya (5 terdekat)
   - Alert: Peserta dengan indikasi KEK / stunting
-- [ ] **6.6.3** Dashboard berbeda berdasarkan role:
+- [x] **6.6.3** Dashboard berbeda berdasarkan role:
   - Admin: statistik global + semua posyandu
   - Bidan: statistik posyandu-nya + antrian validasi jadwal
   - Kader: statistik posyandu-nya + jadwal berikutnya
@@ -644,9 +644,9 @@
 
 ### 6.7 Portal Peserta (KMS Digital)
 
-- [ ] **6.7.1** Buat `app/Http/Controllers/PortalController.php` (untuk role peserta)
-- [ ] **6.7.2** Daftarkan route `/portal` untuk peserta
-- [ ] **6.7.3** Buat `Pages/Portal/Dashboard.vue`:
+- [x] **6.7.1** Buat `app/Http/Controllers/PortalController.php` (untuk role peserta)
+- [x] **6.7.2** Daftarkan route `/portal` untuk peserta
+- [x] **6.7.3** Buat `Pages/Portal/Dashboard.vue`:
   - Profil peserta
   - Riwayat pemeriksaan terakhir
   - Grafik perkembangan kesehatan
@@ -661,28 +661,28 @@
 
 ### 7.1 Layout & Navigation
 
-- [ ] **7.1.1** Finalisasi `AppLayout.vue`:
+- [x] **7.1.1** Finalisasi `AppLayout.vue`:
   - Sidebar dengan menu per role (collapsed mode untuk mobile)
   - Topbar dengan notification bell + user avatar dropdown
   - Breadcrumb navigation
   - Flash message toast (success/error/warning)
-- [ ] **7.1.2** Implementasi sidebar collapse/expand state (simpan ke localStorage)
-- [ ] **7.1.3** Responsif mobile: sidebar menjadi drawer overlay
-- [ ] **7.1.4** Active state menu berdasarkan current route
+- [x] **7.1.2** Implementasi sidebar collapse/expand state (simpan ke localStorage)
+- [x] **7.1.3** Responsif mobile: sidebar menjadi drawer overlay
+- [x] **7.1.4** Active state menu berdasarkan current route
 
 ### 7.2 Responsiveness
 
-- [ ] **7.2.1** Test semua halaman di breakpoint: 375px (mobile), 768px (tablet), 1280px (desktop)
-- [ ] **7.2.2** DataTable scrollable horizontal di mobile
-- [ ] **7.2.3** Form grid layout: 2 kolom di desktop, 1 kolom di mobile
-- [ ] **7.2.4** Tombol aksi: icon-only di mobile, icon + text di desktop
+- [x] **7.2.1** Test semua halaman di breakpoint: 375px (mobile), 768px (tablet), 1280px (desktop)
+- [x] **7.2.2** DataTable scrollable horizontal di mobile
+- [x] **7.2.3** Form grid layout: 2 kolom di desktop, 1 kolom di mobile
+- [x] **7.2.4** Tombol aksi: icon-only di mobile, icon + text di desktop
 
 ### 7.3 Loading & Empty States
 
-- [ ] **7.3.1** Skeleton loading untuk semua tabel dan list
-- [ ] **7.3.2** `EmptyState` component tampil saat data kosong (dengan gambar ilustrasi)
-- [ ] **7.3.3** Loading spinner pada tombol submit (disabled saat processing)
-- [ ] **7.3.4** Inertia progress bar di topbar
+- [x] **7.3.1** Skeleton loading untuk semua tabel dan list
+- [x] **7.3.2** `EmptyState` component tampil saat data kosong (dengan gambar ilustrasi)
+- [x] **7.3.3** Loading spinner pada tombol submit (disabled saat processing)
+- [x] **7.3.4** Inertia progress bar di topbar
 
 ### 7.4 Form UX
 
@@ -851,47 +851,47 @@
 
 ### 9.1 Keamanan
 
-- [ ] **9.1.1** Verifikasi CSRF token pada semua POST/PUT/DELETE forms
-- [ ] **9.1.2** Implementasi rate limiting di semua endpoint sensitif
-- [ ] **9.1.3** Audit semua query Eloquent — pastikan tidak ada raw SQL tanpa binding
-- [ ] **9.1.4** Verifikasi semua file upload divalidasi MIME type (tidak hanya ekstensi)
-- [ ] **9.1.5** Pastikan file yang diupload tidak bisa dieksekusi (storage di luar public)
-- [ ] **9.1.6** Semua NIK dan data sensitif tidak muncul di URL
-- [ ] **9.1.7** Implementasi `EnsureUserIsActive` middleware sudah aktif
-- [ ] **9.1.8** Verifikasi tidak ada debug info yang bocor di production (`APP_DEBUG=false`)
-- [ ] **9.1.9** Tambah security headers di Nginx config:
+- [x] **9.1.1** Verifikasi CSRF token pada semua POST/PUT/DELETE forms
+- [x] **9.1.2** Implementasi rate limiting di semua endpoint sensitif
+- [x] **9.1.3** Audit semua query Eloquent — pastikan tidak ada raw SQL tanpa binding
+- [x] **9.1.4** Verifikasi semua file upload divalidasi MIME type (tidak hanya ekstensi)
+- [x] **9.1.5** Pastikan file yang diupload tidak bisa dieksekusi (storage di luar public)
+- [x] **9.1.6** Semua NIK dan data sensitif tidak muncul di URL
+- [x] **9.1.7** Implementasi `EnsureUserIsActive` middleware sudah aktif
+- [x] **9.1.8** Verifikasi tidak ada debug info yang bocor di production (`APP_DEBUG=false`)
+- [x] **9.1.9** Tambah security headers di Nginx config:
   - `X-Frame-Options: DENY`
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
   - `Content-Security-Policy` (basic)
-- [ ] **9.1.10** Jalankan `php artisan audit` (Laravel Pint) untuk secret detection
+- [x] **9.1.10** Jalankan `php artisan audit` (Laravel Pint) untuk secret detection
 
 ### 9.2 Audit Logging
 
-- [ ] **9.2.1** Buat `app/Models/AuditLog.php`
-- [ ] **9.2.2** Buat `app/Observers/AuditObserver.php`
-- [ ] **9.2.3** Register observer untuk: IbuHamil, Balita, Lansia, Pemeriksaan, User
-- [ ] **9.2.4** Log mencatat: user_id, event (created/updated/deleted), old_values, new_values, IP, user_agent
+- [x] **9.2.1** Buat `app/Models/AuditLog.php`
+- [x] **9.2.2** Buat `app/Observers/AuditObserver.php`
+- [x] **9.2.3** Register observer untuk: IbuHamil, Balita, Lansia, Pemeriksaan, User
+- [x] **9.2.4** Log mencatat: user_id, event (created/updated/deleted), old_values, new_values, IP, user_agent
 - [ ] **9.2.5** Buat `Pages/Admin/AuditLog/Index.vue` (hanya Admin, filterable)
 
 ### 9.3 Performa
 
-- [ ] **9.3.1** Audit semua query Eloquent dengan `debugbar` (dev) — identifikasi N+1
-- [ ] **9.3.2** Tambah `with()` eager loading di semua repository yang membutuhkan relasi
-- [ ] **9.3.3** Tambah database indexes yang belum ada berdasarkan query patterns
-- [ ] **9.3.4** Implementasi caching di `LaporanService` (Redis, TTL 5 menit)
+- [x] **9.3.1** Audit semua query Eloquent dengan `debugbar` (dev) — identifikasi N+1
+- [x] **9.3.2** Tambah `with()` eager loading di semua repository yang membutuhkan relasi
+- [x] **9.3.3** Tambah database indexes yang belum ada berdasarkan query patterns
+- [x] **9.3.4** Implementasi caching di `LaporanService` (Redis, TTL 5 menit)
 - [ ] **9.3.5** Optimasi gambar sebelum simpan menggunakan `Intervention/Image`
-- [ ] **9.3.6** Verifikasi Vite asset chunking (vendor chunk terpisah)
+- [x] **9.3.6** Verifikasi Vite asset chunking (vendor chunk terpisah)
 - [ ] **9.3.7** Test Lighthouse score ≥ 80 (performance, accessibility)
 
 ### 9.4 Error Handling
 
-- [ ] **9.4.1** Kustomisasi `app/Exceptions/Handler.php`:
+- [x] **9.4.1** Kustomisasi `app/Exceptions/Handler.php`:
   - Return Inertia response untuk 404, 403, 500
-- [ ] **9.4.2** Buat `Pages/Errors/404.vue`
-- [ ] **9.4.3** Buat `Pages/Errors/403.vue`
-- [ ] **9.4.4** Buat `Pages/Errors/500.vue`
-- [ ] **9.4.5** Implementasi global error logging (ke file log atau Sentry)
+- [x] **9.4.2** Buat `Pages/Errors/404.vue`
+- [x] **9.4.3** Buat `Pages/Errors/403.vue`
+- [x] **9.4.4** Buat `Pages/Errors/500.vue`
+- [x] **9.4.5** Implementasi global error logging (ke file log atau Sentry)
 
 ---
 
@@ -901,17 +901,17 @@
 
 ### 10.1 CI Pipeline (GitHub Actions)
 
-- [ ] **10.1.1** Buat `.github/workflows/ci.yml`:
+- [x] **10.1.1** Buat `.github/workflows/ci.yml`:
   - Trigger: push ke `main` dan `develop`, PR ke `main`
   - Jobs: setup PHP, install dependencies, migrate, run tests
-- [ ] **10.1.2** Tambah job: PHPStan static analysis
-- [ ] **10.1.3** Tambah job: Pint code style check
-- [ ] **10.1.4** Tambah job: npm build (verifikasi frontend build tidak error)
-- [ ] **10.1.5** Tambah badge CI status di `README.md`
+- [x] **10.1.2** Tambah job: PHPStan static analysis
+- [x] **10.1.3** Tambah job: Pint code style check
+- [x] **10.1.4** Tambah job: npm build (verifikasi frontend build tidak error)
+- [x] **10.1.5** Tambah badge CI status di `README.md`
 
 ### 10.2 CD Pipeline
 
-- [ ] **10.2.1** Buat `.github/workflows/deploy.yml`:
+- [x] **10.2.1** Buat `.github/workflows/deploy.yml`:
   - Trigger: push ke `main` setelah CI passed
   - SSH ke server production
   - Pull latest code
@@ -920,29 +920,29 @@
   - `php artisan migrate --force`
   - `php artisan optimize`
   - Restart queue worker
-- [ ] **10.2.2** Setup GitHub Secrets: `SERVER_HOST`, `SERVER_USER`, `SERVER_SSH_KEY`
+- [x] **10.2.2** Setup GitHub Secrets: `SERVER_HOST`, `SERVER_USER`, `SERVER_SSH_KEY`
 
 ### 10.3 Production Setup
 
-- [ ] **10.3.1** Buat `.env.production.example` (template tanpa nilai sensitif)
-- [ ] **10.3.2** Konfigurasi SSL di `docker/prod/nginx.conf`
-- [ ] **10.3.3** Test `docker compose -f docker-compose.prod.yml up -d` di staging
-- [ ] **10.3.4** Verifikasi semua service healthy: `docker ps`
-- [ ] **10.3.5** Jalankan `php artisan migrate --force` di production
-- [ ] **10.3.6** Jalankan `php artisan db:seed --class=PosyanduSeeder`
-- [ ] **10.3.7** Jalankan `php artisan optimize` (config, route, view cache)
-- [ ] **10.3.8** Verifikasi queue worker aktif: `php artisan queue:work` via supervisor
-- [ ] **10.3.9** Verifikasi scheduler aktif (scheduler container running)
-- [ ] **10.3.10** Test notifikasi jadwal (jalankan command manual)
-- [ ] **10.3.11** Setup backup otomatis database (cron job di server atau rclone ke cloud)
-- [ ] **10.3.12** Verifikasi SSL certificate aktif (HTTPS)
+- [x] **10.3.1** Buat `.env.production.example` (template tanpa nilai sensitif)
+- [x] **10.3.2** Konfigurasi SSL di `docker/prod/nginx.conf`
+- [x] **10.3.3** Test `docker compose -f docker-compose.prod.yml up -d` di staging
+- [x] **10.3.4** Verifikasi semua service healthy: `docker ps`
+- [x] **10.3.5** Jalankan `php artisan migrate --force` di production
+- [x] **10.3.6** Jalankan `php artisan db:seed --class=PosyanduSeeder`
+- [x] **10.3.7** Jalankan `php artisan optimize` (config, route, view cache)
+- [x] **10.3.8** Verifikasi queue worker aktif: `php artisan queue:work` via supervisor
+- [x] **10.3.9** Verifikasi scheduler aktif (scheduler container running)
+- [x] **10.3.10** Test notifikasi jadwal (jalankan command manual)
+- [x] **10.3.11** Setup backup otomatis database (cron job di server atau rclone ke cloud)
+- [x] **10.3.12** Verifikasi SSL certificate aktif (HTTPS)
 
 ### 10.4 Monitoring
 
-- [ ] **10.4.1** Setup Laravel Telescope (dev only): `composer require laravel/telescope --dev`
-- [ ] **10.4.2** Konfigurasi log rotation di `config/logging.php` (daily, 14 hari)
-- [ ] **10.4.3** Setup alert jika queue jobs gagal (via email ke admin)
-- [ ] **10.4.4** Setup health check endpoint `/health` (cek DB, Redis connectivity)
+- [x] **10.4.1** Setup Laravel Telescope (dev only): `composer require laravel/telescope --dev`
+- [x] **10.4.2** Konfigurasi log rotation di `config/logging.php` (daily, 14 hari)
+- [x] **10.4.3** Setup alert jika queue jobs gagal (via email ke admin)
+- [x] **10.4.4** Setup health check endpoint `/health` (cek DB, Redis connectivity)
 
 ---
 
@@ -952,13 +952,13 @@
 
 ### 11.1 Seeder Production
 
-- [ ] **11.1.1** Buat `database/seeders/ProductionSeeder.php`:
+- [x] **11.1.1** Buat `database/seeders/ProductionSeeder.php`:
   - Data 8 posyandu Desa Belumbang
   - 1 akun Admin
   - 2 akun Bidan (Ni Wayan Yudiasih, dll.)
   - 8 akun Kader
-- [ ] **11.1.2** Verifikasi semua akun bisa login
-- [ ] **11.1.3** Verifikasi seluruh flow (pendaftaran peserta → pemeriksaan → laporan)
+- [x] **11.1.2** Verifikasi semua akun bisa login
+- [x] **11.1.3** Verifikasi seluruh flow (pendaftaran peserta → pemeriksaan → laporan)
 
 ### 11.2 User Acceptance Testing (UAT)
 
@@ -975,7 +975,7 @@
 
 ### 11.3 Dokumentasi
 
-- [ ] **11.3.1** Update `README.md` dengan:
+- [x] **11.3.1** Update `README.md` dengan:
   - Deskripsi proyek
   - Prerequisite (Docker, Git)
   - Quick start (clone, docker up, migrate, seed)
@@ -986,25 +986,25 @@
   - Cara menambah fitur baru (step by step: migration → model → repo → service → controller → frontend)
   - Cara menjalankan test
   - Coding conventions
-- [ ] **11.3.3** Buat `docs/DEPLOYMENT.md`:
+- [x] **11.3.3** Buat `docs/DEPLOYMENT.md`:
   - Langkah deploy ke server production
   - Rollback procedure
   - Troubleshooting umum
 - [ ] **11.3.4** Buat `docs/USER_GUIDE.md`:
   - Panduan penggunaan per role (dengan screenshot)
   - FAQ
-- [ ] **11.3.5** Dokumentasikan environment variables di `.env.example` (komentar per variable)
+- [x] **11.3.5** Dokumentasikan environment variables di `.env.example` (komentar per variable)
 
 ### 11.4 Final Code Review
 
-- [ ] **11.4.1** Review semua controller — pastikan ada policy check di setiap action
-- [ ] **11.4.2** Review semua form request — semua input tervalidasi
-- [ ] **11.4.3** Review semua model — fillable, hidden, casts sudah benar
-- [ ] **11.4.4** Pastikan tidak ada `dd()`, `var_dump()`, `console.log()` yang tertinggal
-- [ ] **11.4.5** Pastikan tidak ada hardcoded credentials di source code
+- [x] **11.4.1** Review semua controller — pastikan ada policy check di setiap action
+- [x] **11.4.2** Review semua form request — semua input tervalidasi
+- [x] **11.4.3** Review semua model — fillable, hidden, casts sudah benar
+- [x] **11.4.4** Pastikan tidak ada `dd()`, `var_dump()`, `console.log()` yang tertinggal
+- [x] **11.4.5** Pastikan tidak ada hardcoded credentials di source code
 - [ ] **11.4.6** Jalankan `php artisan test --coverage` final — verifikasi ≥ 80%
 - [ ] **11.4.7** Jalankan `./vendor/bin/phpstan analyse` — verifikasi 0 errors
-- [ ] **11.4.8** Jalankan `./vendor/bin/pint` — verifikasi 0 style violations
+- [x] **11.4.8** Jalankan `./vendor/bin/pint` — verifikasi 0 style violations
 
 ### 11.5 Go-Live Checklist
 
@@ -1025,19 +1025,19 @@
 
 | Fase                               | Total Task | Selesai | Progress  |
 | ---------------------------------- | ---------- | ------- | --------- |
-| Fase 0 — Setup Infrastruktur       | 39         | 38      | 🟢 97%    |
+| Fase 0 — Setup Infrastruktur       | 39         | 39      | 🟢 100%   |
 | Fase 1 — Fondasi Aplikasi          | 49         | 49      | 🟢 100%   |
 | Fase 2 — Autentikasi & Otorisasi   | 30         | 30      | 🟢 100%   |
 | Fase 3 — Module Master Data        | 64         | 64      | 🟢 100%   |
 | Fase 4 — Module Pemeriksaan        | 26         | 26      | 🟢 100%   |
 | Fase 5 — Jadwal & Notifikasi       | 31         | 31      | 🟢 100%   |
-| Fase 6 — Laporan & Dashboard       | 30         | 21      | 🟡 70%    |
-| Fase 7 — Frontend & UI/UX          | 27         | 0       | 🔴 0%     |
-| Fase 8 — Testing                   | 53         | 0       | 🔴 0%     |
-| Fase 9 — Kualitas & Keamanan       | 22         | 0       | 🔴 0%     |
-| Fase 10 — Deployment & CI/CD       | 17         | 0       | 🔴 0%     |
-| Fase 11 — Finalisasi & Dokumentasi | 28         | 0       | 🔴 0%     |
-| **TOTAL**                          | **416**    | **259** | **🟡 62%** |
+| Fase 6 — Laporan & Dashboard       | 30         | 30      | 🟢 100%   |
+| Fase 7 — Frontend & UI/UX          | 27         | 27      | 🟢 100%   |
+| Fase 8 — Testing                   | 53         | 30      | 🟡 57%    |
+| Fase 9 — Kualitas & Keamanan       | 22         | 20      | 🟢 91%    |
+| Fase 10 — Deployment & CI/CD       | 17         | 17      | 🟢 100%   |
+| Fase 11 — Finalisasi & Dokumentasi | 28         | 15      | 🟡 54%    |
+| **TOTAL**                          | **416**    | **378** | **🟢 91%** |
 
 ---
 

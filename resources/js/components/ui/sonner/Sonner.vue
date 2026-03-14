@@ -9,13 +9,14 @@ const props = defineProps<ToasterProps>()
 
 <template>
   <Sonner
-    :class="cn('toaster group', props.class)"
+    class="toaster group"
     :style="{
       '--normal-bg': 'var(--popover)',
       '--normal-text': 'var(--popover-foreground)',
       '--normal-border': 'var(--border)',
       '--border-radius': 'var(--radius)',
     }"
+    position="top-right"
     v-bind="props"
   >
     <template #success-icon>

@@ -84,16 +84,36 @@ class LaporanController extends Controller
         $tahun = (int) $request->input('tahun', now()->year);
         $posyanduId = $request->input('posyandu_id');
 
+        // Use queue for large exports (>100 records)
+        $filters = array_merge($request->only(['posyandu_id']), [
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+        ]);
+
+        // Check record count to decide whether to use queue
+        $data = match ($type) {
+            'ibu_hamil' => $this->laporanService->laporanIbuHamil($filters),
+            'balita' => $this->laporanService->laporanBalita($filters),
+            'lansia' => $this->laporanService->laporanLansia($filters),
+            default => $this->laporanService->laporanBulanan($bulan, $tahun, $posyanduId)['data'],
+        };
+
+        // Use queue if more than 100 records
+        if ($data->count() > 100) {
+            \App\Jobs\ExportLaporanJob::dispatch(
+                $type,
+                $filters,
+                'pdf',
+                auth()->id()
+            );
+
+            return back()->with('success', 'Laporan sedang diproses. Anda akan menerima notifikasi ketika selesai.');
+        }
+
         return match ($type) {
-            'ibu_hamil' => $this->pdfExportService->exportIbuHamil(
-                $this->laporanService->laporanIbuHamil($request->only(['posyandu_id']))
-            ),
-            'balita' => $this->pdfExportService->exportBalita(
-                $this->laporanService->laporanBalita($request->only(['posyandu_id']))
-            ),
-            'lansia' => $this->pdfExportService->exportLansia(
-                $this->laporanService->laporanLansia($request->only(['posyandu_id']))
-            ),
+            'ibu_hamil' => $this->pdfExportService->exportIbuHamil($data),
+            'balita' => $this->pdfExportService->exportBalita($data),
+            'lansia' => $this->pdfExportService->exportLansia($data),
             default => $this->exportBulananPdf($bulan, $tahun, $posyanduId),
         };
     }
@@ -105,17 +125,42 @@ class LaporanController extends Controller
         $tahun = (int) $request->input('tahun', now()->year);
         $posyanduId = $request->input('posyandu_id');
 
+        $filters = array_merge($request->only(['posyandu_id']), [
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+        ]);
+
+        // Check record count to decide whether to use queue
+        $data = match ($type) {
+            'ibu_hamil' => $this->laporanService->laporanIbuHamil($filters),
+            'balita' => $this->laporanService->laporanBalita($filters),
+            'lansia' => $this->laporanService->laporanLansia($filters),
+            default => $this->laporanService->laporanBulanan($bulan, $tahun, $posyanduId)['data'],
+        };
+
+        // Use queue if more than 100 records
+        if ($data->count() > 100) {
+            \App\Jobs\ExportLaporanJob::dispatch(
+                $type,
+                $filters,
+                'excel',
+                auth()->id()
+            );
+
+            return back()->with('success', 'Laporan sedang diproses. Anda akan menerima notifikasi ketika selesai.');
+        }
+
         return match ($type) {
             'ibu_hamil' => Excel::download(
-                new IbuHamilExport($this->laporanService->laporanIbuHamil($request->only(['posyandu_id']))),
+                new IbuHamilExport($data),
                 'laporan-ibu-hamil-' . now()->format('Y-m-d') . '.xlsx'
             ),
             'balita' => Excel::download(
-                new BalitaExport($this->laporanService->laporanBalita($request->only(['posyandu_id']))),
+                new BalitaExport($data),
                 'laporan-balita-' . now()->format('Y-m-d') . '.xlsx'
             ),
             'lansia' => Excel::download(
-                new LansiaExport($this->laporanService->laporanLansia($request->only(['posyandu_id']))),
+                new LansiaExport($data),
                 'laporan-lansia-' . now()->format('Y-m-d') . '.xlsx'
             ),
             default => $this->exportBulananExcel($bulan, $tahun, $posyanduId),

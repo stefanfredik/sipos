@@ -33,5 +33,33 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Foundation\Exceptions\Handler $handler, \Throwable $e) {
+            if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
+                return \Inertia\Inertia::render('Errors/403', [
+                    'status' => 403,
+                    'title' => 'Akses Ditolak',
+                ])->toResponse(request())->setStatusCode(403);
+            }
+
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+                return \Inertia\Inertia::render('Errors/404', [
+                    'status' => 404,
+                    'title' => 'Halaman Tidak Ditemukan',
+                ])->toResponse(request())->setStatusCode(404);
+            }
+
+            if ($e instanceof \Illuminate\Session\TokenMismatchException) {
+                return redirect()->route('login');
+            }
+
+            // For other 5xx errors
+            if (request()->is('api/*') || request()->expectsJson()) {
+                return;
+            }
+
+            return \Inertia\Inertia::render('Errors/500', [
+                'status' => 500,
+                'title' => 'Terjadi Kesalahan',
+            ])->toResponse(request())->setStatusCode(500);
+        });
     })->create();

@@ -2,17 +2,17 @@ import { toast as sonnerToast } from 'vue-sonner';
 
 export function useToast() {
     return {
-        success: (message: string, description?: string) => {
-            sonnerToast.success(message, { description });
+        success: (title: string, description?: string) => {
+            sonnerToast.success(title, { description, position: 'top-right' });
         },
-        error: (message: string, description?: string) => {
-            sonnerToast.error(message, { description });
+        error: (title: string, description?: string) => {
+            sonnerToast.error(title, { description, position: 'top-right' });
         },
-        warning: (message: string, description?: string) => {
-            sonnerToast.warning(message, { description });
+        warning: (title: string, description?: string) => {
+            sonnerToast.warning(title, { description, position: 'top-right' });
         },
-        info: (message: string, description?: string) => {
-            sonnerToast.info(message, { description });
+        info: (title: string, description?: string) => {
+            sonnerToast.info(title, { description, position: 'top-right' });
         },
     };
 }

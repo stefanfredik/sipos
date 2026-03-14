@@ -36,6 +36,7 @@ import {
 } from 'lucide-vue-next';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/Composables/useToast';
+import SearchableSelect from '@/components/ui/SearchableSelect.vue';
 
 interface Participant {
     id: string;
@@ -55,6 +56,38 @@ const props = defineProps<{
 }>();
 
 const toast = useToast();
+
+const jadwalOptions = computed(() =>
+    props.jadwal.map((j) => ({
+        id: j.id,
+        label: `${j.tanggal} - ${j.posyandu?.nama} (${j.status})`,
+    })),
+);
+
+const kaderOptions = computed(() =>
+    props.kader.map((k) => ({
+        id: k.id,
+        label: k.nama_kader,
+    })),
+);
+
+const bidanOptions = computed(() =>
+    props.bidan.map((b) => ({
+        id: b.id,
+        label: b.nama_bidan,
+    })),
+);
+
+const currentParticipants = computed(() => {
+    return props.participants[form.peserta_type] || [];
+});
+
+const pesertaOptions = computed(() => {
+    return currentParticipants.value.map((p) => ({
+        id: p.id,
+        label: `${p.nama} (${p.nik})`,
+    }));
+});
 
 const form = useForm({
     jadwal_posyandu_id: '',
@@ -92,10 +125,6 @@ const form = useForm({
 
     edukasi: '',
     keterangan: '',
-});
-
-const currentParticipants = computed(() => {
-    return props.participants[form.peserta_type] || [];
 });
 
 const submit = () => {
@@ -146,31 +175,12 @@ const submit = () => {
                             >
                         </CardHeader>
                         <CardContent class="grid gap-6 md:grid-cols-2">
-                            <div class="space-y-2">
-                                <Label for="jadwal">Jadwal Posyandu</Label>
-                                <Select
-                                    v-model="form.jadwal_posyandu_id"
-                                    required
-                                >
-                                    <SelectTrigger id="jadwal">
-                                        <SelectValue
-                                            placeholder="Pilih Jadwal..."
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem
-                                            v-for="j in jadwal"
-                                            :key="j.id"
-                                            :value="j.id"
-                                        >
-                                            {{ j.tanggal }} -
-                                            {{ j.posyandu?.nama }} ({{
-                                                j.status
-                                            }})
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                            <SearchableSelect
+                                v-model="form.jadwal_posyandu_id"
+                                :options="jadwalOptions"
+                                placeholder="Pilih Jadwal..."
+                                label="Jadwal Posyandu"
+                            />
 
                             <div class="space-y-2">
                                 <Label for="peserta_type"
@@ -199,22 +209,12 @@ const submit = () => {
 
                             <div class="space-y-2">
                                 <Label for="peserta_id">Nama Peserta</Label>
-                                <Select v-model="form.peserta_id" required>
-                                    <SelectTrigger id="peserta_id">
-                                        <SelectValue
-                                            :placeholder="`Pilih ${form.peserta_type.replace('_', ' ')}...`"
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem
-                                            v-for="p in currentParticipants"
-                                            :key="p.id"
-                                            :value="p.id"
-                                        >
-                                            {{ p.nama }} ({{ p.nik }})
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <SearchableSelect
+                                    v-model="form.peserta_id"
+                                    :options="pesertaOptions"
+                                    placeholder="Pilih Peserta..."
+                                    :label="form.peserta_type.replace('_', ' ')"
+                                />
                             </div>
 
                             <div class="space-y-2">
@@ -463,48 +463,23 @@ const submit = () => {
                     <Card>
                         <CardHeader>
                             <CardTitle class="flex items-center gap-2">
-                                < ClipboardList class="h-5 w-5 text-gray-500" />
                                 Catatan & Petugas
                             </CardTitle>
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="grid gap-4 md:grid-cols-2">
-                                <div class="space-y-2">
-                                    <Label for="kader">Kader Petugas</Label>
-                                    <Select v-model="form.kader_id">
-                                        <SelectTrigger id="kader">
-                                            <SelectValue
-                                                placeholder="Pilih Kader..."
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem
-                                                v-for="k in kader"
-                                                :key="k.id"
-                                                :value="k.id"
-                                                >{{ k.nama }}</SelectItem
-                                            >
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div class="space-y-2">
-                                    <Label for="bidan">Bidan Pendamping</Label>
-                                    <Select v-model="form.bidan_id">
-                                        <SelectTrigger id="bidan">
-                                            <SelectValue
-                                                placeholder="Pilih Bidan..."
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem
-                                                v-for="b in bidan"
-                                                :key="b.id"
-                                                :value="b.id"
-                                                >{{ b.nama }}</SelectItem
-                                            >
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                <SearchableSelect
+                                    v-model="form.kader_id"
+                                    :options="kaderOptions"
+                                    placeholder="Pilih Kader..."
+                                    label="Kader Petugas"
+                                />
+                                <SearchableSelect
+                                    v-model="form.bidan_id"
+                                    :options="bidanOptions"
+                                    placeholder="Pilih Bidan..."
+                                    label="Bidan Pendamping"
+                                />
                             </div>
                             <div class="space-y-2">
                                 <Label for="edukasi"
