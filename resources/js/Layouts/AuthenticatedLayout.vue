@@ -249,7 +249,7 @@ function renderMenuItem(item: NavItem) {
         'a',
         {
             href: route(item.route!),
-            class: `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted ${item.active ? 'bg-muted font-medium' : 'text-muted-foreground'}`,
+            class: `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white ${item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'}`,
         },
         [
             h(item.icon, { class: 'h-4 w-4' }),
@@ -261,7 +261,7 @@ function renderMenuItem(item: NavItem) {
 
 <template>
     <SidebarProvider>
-        <Sidebar collapsible="icon">
+        <Sidebar collapsible="icon" class="bg-slate-950 text-white border-r-slate-800">
             <!-- Header -->
             <SidebarHeader>
                 <SidebarMenu>
@@ -274,8 +274,8 @@ function renderMenuItem(item: NavItem) {
                                     <Package2 class="size-4" />
                                 </div>
                                 <div class="flex flex-col gap-0.5 leading-none">
-                                    <span class="font-semibold">SIPOS</span>
-                                    <span class="text-xs text-muted-foreground"
+                                    <span class="font-semibold text-white">SIPOS</span>
+                                    <span class="text-xs text-slate-400"
                                         >Posyandu Belumbang</span
                                     >
                                 </div>
@@ -288,7 +288,7 @@ function renderMenuItem(item: NavItem) {
             <SidebarContent>
                 <!-- Menu Utama -->
                 <SidebarGroup>
-                    <SidebarGroupLabel>Menu Utama</SidebarGroupLabel>
+                    <SidebarGroupLabel class="text-slate-500 font-bold uppercase tracking-wider">Menu Utama</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem
@@ -311,7 +311,7 @@ function renderMenuItem(item: NavItem) {
 
                 <!-- Data Peserta -->
                 <SidebarGroup v-if="filterByRole(pesertaNavItems).length > 0">
-                    <SidebarGroupLabel>Data Peserta</SidebarGroupLabel>
+                    <SidebarGroupLabel class="text-slate-500 font-bold uppercase tracking-wider">Data Peserta</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem
@@ -334,7 +334,7 @@ function renderMenuItem(item: NavItem) {
 
                 <!-- Master Data (Admin only) -->
                 <SidebarGroup v-if="filterByRole(masterNavItems).length > 0">
-                    <SidebarGroupLabel>Master Data</SidebarGroupLabel>
+                    <SidebarGroupLabel class="text-slate-500 font-bold uppercase tracking-wider">Master Data</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem
@@ -357,7 +357,7 @@ function renderMenuItem(item: NavItem) {
 
                 <!-- Laporan -->
                 <SidebarGroup v-if="filterByRole(laporanNavItems).length > 0">
-                    <SidebarGroupLabel>Laporan</SidebarGroupLabel>
+                    <SidebarGroupLabel class="text-slate-500 font-bold uppercase tracking-wider">Laporan</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem
@@ -387,7 +387,7 @@ function renderMenuItem(item: NavItem) {
                             <DropdownMenuTrigger as-child>
                                 <SidebarMenuButton
                                     size="lg"
-                                    class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                                    class="data-[state=open]:bg-slate-900 data-[state=open]:text-white hover:bg-slate-900 hover:text-white"
                                 >
                                     <Avatar class="h-8 w-8 rounded-lg">
                                         <AvatarFallback
@@ -397,17 +397,17 @@ function renderMenuItem(item: NavItem) {
                                         </AvatarFallback>
                                     </Avatar>
                                     <div
-                                        class="grid flex-1 text-left text-sm leading-tight"
+                                        class="grid flex-1 text-left text-sm leading-tight text-white"
                                     >
                                         <span class="truncate font-semibold">{{
                                             user?.nama_user
                                         }}</span>
                                         <span
-                                            class="truncate text-xs text-muted-foreground"
+                                            class="truncate text-xs text-slate-400"
                                             >{{ roleLabel }}</span
                                         >
                                     </div>
-                                    <ChevronsUpDown class="ml-auto size-4" />
+                                    <ChevronsUpDown class="ml-auto size-4 text-slate-400" />
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
@@ -485,24 +485,24 @@ function renderMenuItem(item: NavItem) {
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" class="w-72 p-0">
-                        <SheetHeader class="border-b px-4 py-3">
-                            <SheetTitle class="flex items-center gap-2">
-                                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                    <SheetContent side="left" class="w-72 p-0 bg-slate-950 text-white border-r-slate-800">
+                        <SheetHeader class="border-b border-slate-800 px-4 py-3">
+                            <SheetTitle class="flex items-center gap-2 text-white">
+                                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white">
                                     <Package2 class="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <div class="text-sm font-semibold">SIPOS</div>
-                                    <div class="text-xs text-muted-foreground">Posyandu Belumbang</div>
+                                    <div class="text-sm font-semibold text-white">SIPOS</div>
+                                    <div class="text-xs text-slate-400">Posyandu Belumbang</div>
                                 </div>
                             </SheetTitle>
                         </SheetHeader>
                         <div class="overflow-y-auto p-4">
                             <!-- Main Menu -->
                             <div class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Menu Utama</div>
+                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Menu Utama</div>
                                 <div class="space-y-1">
-                                    <a v-for="item in filterByRole(mainNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                    <a v-for="item in filterByRole(mainNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
                                         <component :is="item.icon" class="h-4 w-4" />
                                         <span>{{ item.title }}</span>
                                     </a>
@@ -511,9 +511,9 @@ function renderMenuItem(item: NavItem) {
                             
                             <!-- Peserta Menu -->
                             <div v-if="filterByRole(pesertaNavItems).length > 0" class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Data Peserta</div>
+                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Data Peserta</div>
                                 <div class="space-y-1">
-                                    <a v-for="item in filterByRole(pesertaNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                    <a v-for="item in filterByRole(pesertaNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
                                         <component :is="item.icon" class="h-4 w-4" />
                                         <span>{{ item.title }}</span>
                                     </a>
@@ -522,9 +522,9 @@ function renderMenuItem(item: NavItem) {
                             
                             <!-- Master Data (Admin only) -->
                             <div v-if="filterByRole(masterNavItems).length > 0" class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Master Data</div>
+                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Master Data</div>
                                 <div class="space-y-1">
-                                    <a v-for="item in filterByRole(masterNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                    <a v-for="item in filterByRole(masterNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
                                         <component :is="item.icon" class="h-4 w-4" />
                                         <span>{{ item.title }}</span>
                                     </a>
@@ -533,9 +533,9 @@ function renderMenuItem(item: NavItem) {
                             
                             <!-- Laporan -->
                             <div v-if="filterByRole(laporanNavItems).length > 0" class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-muted-foreground">Laporan</div>
+                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Laporan</div>
                                 <div class="space-y-1">
-                                    <a v-for="item in filterByRole(laporanNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted" :class="{ 'bg-muted font-medium': item.active }">
+                                    <a v-for="item in filterByRole(laporanNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
                                         <component :is="item.icon" class="h-4 w-4" />
                                         <span>{{ item.title }}</span>
                                     </a>

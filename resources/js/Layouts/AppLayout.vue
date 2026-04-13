@@ -25,21 +25,21 @@ const navigation = [
 
 <template>
 <div class="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-    <div class="hidden border-r bg-muted/40 md:block">
+    <div class="hidden border-r border-slate-800 bg-slate-950 text-white md:block">
       <div class="flex h-full max-h-screen flex-col gap-2">
-        <div class="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <Link href="/" class="flex items-center gap-2 font-semibold text-indigo-600">
-            <Package2Icon class="h-6 w-6" />
+        <div class="flex h-14 items-center border-b border-slate-800 px-4 lg:h-[60px] lg:px-6">
+          <Link href="/" class="flex items-center gap-2 font-semibold text-white">
+            <Package2Icon class="h-6 w-6 text-emerald-400" />
             <span class="">SIPOS</span>
           </Link>
-          <Button variant="outline" size="icon" class="ml-auto h-8 w-8">
+          <Button variant="outline" size="icon" class="ml-auto h-8 w-8 bg-transparent text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white">
             <BellIcon class="h-4 w-4" />
             <span class="sr-only">Toggle notifications</span>
           </Button>
         </div>
         <div class="flex-1">
           <nav class="grid items-start px-2 text-sm font-medium lg:px-4">
-            <Link v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-muted text-primary' : 'text-muted-foreground', 'flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary']">
+            <Link v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-400', 'flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-white hover:bg-slate-800/50']">
               <component :is="item.icon" class="h-4 w-4" />
               {{ item.name }}
             </Link>
@@ -56,13 +56,13 @@ const navigation = [
               <span class="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" class="flex flex-col">
+          <SheetContent side="left" class="flex flex-col bg-slate-950 border-r-slate-800">
             <nav class="grid gap-2 text-lg font-medium">
-              <Link href="#" class="flex items-center gap-2 text-lg font-semibold text-indigo-600">
-                <Package2Icon class="h-6 w-6" />
+              <Link href="#" class="flex items-center gap-2 text-lg font-semibold text-white">
+                <Package2Icon class="h-6 w-6 text-emerald-400" />
                 <span class="">SIPOS</span>
               </Link>
-              <Link v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-muted text-primary' : 'text-muted-foreground hover:text-foreground', 'mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2']">
+              <Link v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white', 'mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2']">
                 <component :is="item.icon" class="h-5 w-5" />
                 {{ item.name }}
               </Link>
