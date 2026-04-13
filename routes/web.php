@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -9,10 +8,32 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'canResetPassword' => Route::has('password.request'),
+        'status' => session('status'),
+        'systemStats' => [
+            'posyandu' => \App\Models\Posyandu::count(),
+            'kader' => \App\Models\Kader::count(),
+            'balita' => \App\Models\Balita::count(),
+            'lansia' => \App\Models\Lansia::count(),
+            'ibuHamil' => \App\Models\IbuHamil::count(),
+            'jadwal' => \App\Models\JadwalPosyandu::count(),
+        ],
+        'recentActivity' => \App\Models\Pemeriksaan::with('peserta')
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(fn($p) => [
+                'name' => $p->peserta?->nama ?? 'Peserta',
+                'type' => match($p->peserta_type) {
+                    'App\Models\Balita' => 'Balita',
+                    'App\Models\IbuHamil' => 'Ibu Hamil',
+                    'App\Models\Lansia' => 'Lansia',
+                    default => 'Umum'
+                },
+                'date' => $p->created_at->diffForHumans(),
+            ]),
     ]);
-});
+})->name('home');
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
