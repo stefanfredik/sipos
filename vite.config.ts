@@ -20,9 +20,11 @@ export default defineConfig({
                 },
             },
         }),
-        wayfinder({
-            formVariants: true,
-        }),
+        ...(process.env.NODE_ENV !== 'production' ? [
+            wayfinder({
+                formVariants: true,
+            })
+        ] : []),
     ],
     server: {
         host: '0.0.0.0',

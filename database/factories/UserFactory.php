@@ -25,9 +25,9 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_user' => fake()->name(),
-            'username' => fake()->unique()->userName(),
-            'email' => fake()->unique()->safeEmail(),
+            'nama_user' => 'Default User',
+            'username' => 'user_' . Str::random(5),
+            'email' => 'user_' . Str::random(5) . '@example.com',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'role' => \App\Enums\UserRole::Peserta->value,

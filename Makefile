@@ -1,57 +1,109 @@
-.PHONY: setup up down shell tinker test format analyze migrate dev build clear log
+.PHONY: setup up down shell tinker test format analyze migrate dev build clear log \
+        prod-setup prod-up prod-down prod-build prod-shell prod-migrate prod-optimize prod-log
 
-# Docker aliases
-DC = docker compose -f docker-compose.dev.yml
-APP = docker exec -it sipos_app_dev
+# === Development Configuration ===
+DC_DEV = docker compose -f docker-compose.dev.yml
+APP_DEV = docker exec -it sipos_app_dev
 
+# === Production Configuration ===
+DC_PROD = docker compose -f docker-compose.prod.yml
+APP_PROD = docker exec -it sipos_app
+
+# Default to development
+DC = $(DC_DEV)
+APP = $(APP_DEV)
+
+# --- Development Commands ---
 setup:
 	@cp .env.example .env
-	@$(DC) up -d --build
-	@$(APP) composer install
-	@$(APP) php artisan key:generate
-	@$(APP) php artisan migrate:fresh --seed
-	@$(APP) npm install
-	@$(APP) npm run build
+	@$(DC_DEV) up -d --build
+	@$(APP_DEV) composer install
+	@$(APP_DEV) php artisan key:generate
+	@$(APP_DEV) php artisan migrate:fresh --seed
+	@$(APP_DEV) npm install
+	@$(APP_DEV) npm run build
 
 up:
-	@$(DC) up -d
+	@$(DC_DEV) up -d
 
 down:
-	@$(DC) down
+	@$(DC_DEV) down
 
 shell:
-	@$(APP) sh
+	@$(APP_DEV) sh
 
 tinker:
-	@$(APP) php artisan tinker
+	@$(APP_DEV) php artisan tinker
 
 test:
-	@$(APP) php artisan test
+	@$(APP_DEV) php artisan test
 
 format:
-	@$(APP) ./vendor/bin/pint
-	@$(APP) npm run format
+	@$(APP_DEV) ./vendor/bin/pint
+	@$(APP_DEV) npm run format
 
 analyze:
-	@$(APP) ./vendor/bin/phpstan analyse
+	@$(APP_DEV) ./vendor/bin/phpstan analyse
 
 migrate:
-	@$(APP) php artisan migrate
+	@$(APP_DEV) php artisan migrate
 
 migrate-fresh:
-	@$(APP) php artisan migrate:fresh --seed
+	@$(APP_DEV) php artisan migrate:fresh --seed
 
 seed:
-	@$(APP) php artisan db:seed
+	@$(APP_DEV) php artisan db:seed
 
 dev:
-	@$(APP) npm run dev
+	@$(APP_DEV) npm run dev
 
 build:
-	@$(APP) npm run build
+	@$(APP_DEV) npm run build
 
 clear:
-	@$(APP) php artisan optimize:clear
+	@$(APP_DEV) php artisan optimize:clear
 
 log:
 	@docker logs -f sipos_app_dev
+
+# --- Production Commands ---
+prod-setup:
+	@if [ ! -f .env.production ]; then cp .env.production.example .env.production; fi
+	@echo "Please configure .env.production before continuing."
+	@$(DC_PROD) up -d --build
+	@$(APP_PROD) php artisan key:generate --force
+	@$(APP_PROD) php artisan migrate --force
+	@$(APP_PROD) php artisan optimize
+
+prod-up:
+	@$(DC_PROD) up -d
+
+prod-down:
+	@$(DC_PROD) down
+
+prod-build:
+	@$(DC_PROD) build --no-cache
+
+prod-shell:
+	@$(APP_PROD) sh
+
+prod-migrate:
+	@$(APP_PROD) php artisan migrate --force
+
+prod-optimize:
+	@$(APP_PROD) php artisan optimize
+	@$(APP_PROD) php artisan view:cache
+	@$(APP_PROD) php artisan config:cache
+	@$(APP_PROD) php artisan route:cache
+
+prod-clear:
+	@$(APP_PROD) php artisan optimize:clear
+
+prod-log:
+	@$(DC_PROD) logs -f
+
+prod-restart:
+	@$(DC_PROD) restart
+
+prod-status:
+	@$(DC_PROD) ps

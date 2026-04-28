@@ -25,11 +25,11 @@ class PosyanduFactory extends Factory
     public function definition(): array
     {
         $names = ['Melati', 'Mawar', 'Anggrek', 'Kenanga', 'Cempaka', 'Dahlia', 'Tulip', 'Sakura'];
-        $name = $names[array_rand($names)] . ' ' . $this->faker->unique()->numberBetween(1, 10);
+        $name = $names[array_rand($names)] . ' ' . rand(1, 100);
         
         return [
             'nama_posyandu' => 'Posyandu ' . $name,
-            'lokasi' => $this->faker->streetName(),
+            'lokasi' => 'Lokasi ' . $name,
             'deskripsi' => 'Posyandu Desa Belumbang, Kec. Kerambitan, Kab. Tabanan',
             'is_active' => true,
         ];

@@ -45,10 +45,6 @@ COPY --from=node-builder /app/public/build ./public/build
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
 RUN chown -R www-data:www-data /var/www/html/storage \
     /var/www/html/bootstrap/cache
 
