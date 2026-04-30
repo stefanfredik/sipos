@@ -22,8 +22,8 @@ class JadwalPosyanduRepository extends BaseRepository implements JadwalPosyanduR
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->whereHas('posyandu', fn ($p) => $p->where('nama_posyandu', 'like', "%{$search}%"))
-                  ->orWhereHas('kader', fn ($k) => $k->where('nama', 'like', "%{$search}%"))
-                  ->orWhereHas('bidan', fn ($b) => $b->where('nama', 'like', "%{$search}%"));
+                  ->orWhereHas('kader', fn ($k) => $k->where('nama_kader', 'like', "%{$search}%"))
+                  ->orWhereHas('bidan', fn ($b) => $b->where('nama_bidan', 'like', "%{$search}%"));
             });
         }
 

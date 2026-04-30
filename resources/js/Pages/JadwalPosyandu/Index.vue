@@ -26,7 +26,9 @@ import { useToast } from '@/Composables/useToast';
 
 interface Jadwal {
     id: string;
-    posyandu: { nama: string };
+    posyandu: { nama_posyandu: string };
+    kader: { nama_kader: string } | null;
+    bidan: { nama_bidan: string } | null;
     kader: { nama: string } | null;
     bidan: { nama: string } | null;
     tanggal: string;
@@ -132,13 +134,13 @@ function getStatusVariant(status: string) {
                                 </div>
                             </TableCell>
                             <TableCell class="font-medium">{{
-                                item.posyandu.nama
+                                item.posyandu.nama_posyandu
                             }}</TableCell>
                             <TableCell class="text-muted-foreground">{{
-                                item.kader?.nama || '-'
+                                item.kader?.nama_kader || '-'
                             }}</TableCell>
                             <TableCell class="text-muted-foreground">{{
-                                item.bidan?.nama || '-'
+                                item.bidan?.nama_bidan || '-'
                             }}</TableCell>
                             <TableCell class="text-center">
                                 <Badge :variant="getStatusVariant(item.status)">
