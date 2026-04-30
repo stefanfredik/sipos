@@ -50,8 +50,9 @@ class ExportLaporanJob implements ShouldQueue
                 'lansia' => $laporanService->laporanLansia($this->filters),
                 'bulanan' => $laporanService->laporanBulanan(
                     $this->filters['bulan'] ?? now()->month,
-                    $this->filters['tahun'] ?? now()->year
-                ),
+                    $this->filters['tahun'] ?? now()->year,
+                    $this->filters['posyandu_id'] ?? null
+                )['data'] ?? [],
                 default => throw new \InvalidArgumentException("Invalid report type: {$this->type}")
             };
 
@@ -116,9 +117,34 @@ class ExportLaporanJob implements ShouldQueue
      */
     private function exportToPdf(array|object $data, string $filePath): void
     {
-        $pdf = \PDF::loadView("reports.{$this->type}", compact('data'));
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->save($filePath);
+        $viewName = match ($this->type) {
+            'ibu_hamil' => 'laporan.ibu-hamil',
+            'balita' => 'laporan.balita',
+            'lansia' => 'laporan.lansia',
+            default => 'laporan.bulanan',
+        };
+
+        // For bulanan, we might need stats and periode. Since this is a job we handle it specially.
+        $viewData = ['data' => $data];
+        if ($this->type === 'bulanan') {
+            $bulanLabels = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
+            $bulan = $this->filters['bulan'] ?? now()->month;
+            $tahun = $this->filters['tahun'] ?? now()->year;
+            $viewData['periode'] = ($bulanLabels[$bulan] ?? $bulan) . ' ' . $tahun;
+            
+            $collection = is_array($data) ? collect($data) : $data;
+            $viewData['stats'] = [
+                'total_bumil' => collect($collection)->where('peserta_type', 'ibu_hamil')->count(),
+                'total_balita' => collect($collection)->where('peserta_type', 'balita')->count(),
+                'total_lansia' => collect($collection)->where('peserta_type', 'lansia')->count(),
+                'total_hadir' => collect($collection)->where('hadir', true)->count(),
+            ];
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($viewName, $viewData);
+        $pdf->setPaper('A4', 'landscape');
+        \Illuminate\Support\Facades\Storage::put($filePath, $pdf->output());
     }
 
     /**

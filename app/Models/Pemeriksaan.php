@@ -68,9 +68,14 @@ class Pemeriksaan extends Model
         return $this->morphTo();
     }
 
+    public function jadwal(): BelongsTo
+    {
+        return $this->belongsTo(JadwalPosyandu::class, 'jadwal_posyandu_id');
+    }
+
     public function jadwalPosyandu(): BelongsTo
     {
-        return $this->belongsTo(JadwalPosyandu::class);
+        return $this->belongsTo(JadwalPosyandu::class, 'jadwal_posyandu_id');
     }
 
     public function kader(): BelongsTo

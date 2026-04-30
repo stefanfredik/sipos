@@ -128,19 +128,44 @@ const barChartOptions = {
         y: { beginAtZero: true, grid: { color: 'hsl(var(--border))' } },
         x: { grid: { display: false } },
     },
-};
+} as any;
 
-const processedBarChartData = computed(() => ({
-    labels: (props.distribusiData || []).map((d) => d.nama),
-    datasets: [
-        {
-            label: 'Kader per Posyandu',
-            backgroundColor: 'hsl(var(--primary))',
-            data: (props.distribusiData || []).map((d) => d.total),
-            borderRadius: 6,
-        },
-    ],
-}));
+// Warna-warna untuk setiap posyandu
+const posyanduColors = [
+    'hsl(var(--primary))',           // Blue
+    'hsl(142 72% 29%)',              // Green
+    'hsl(352 96% 56%)',              // Red
+    'hsl(47 96% 53%)',               // Yellow
+    'hsl(262 80% 50%)',              // Purple
+    'hsl(25 95% 53%)',               // Orange
+    'hsl(199 89% 48%)',              // Sky
+    'hsl(280 85% 58%)',              // Violet
+];
+
+const processedBarChartData = computed(() => {
+    const data = props.distribusiData || [];
+    return {
+        labels: data.map((_, idx) => `●`), // Label hanya dot
+        datasets: [
+            {
+                label: 'Kader per Posyandu',
+                backgroundColor: data.map((_, idx) => posyanduColors[idx % posyanduColors.length]),
+                data: data.map((d) => d.total),
+                borderRadius: 6,
+                borderSkipped: false,
+            },
+        ],
+    };
+});
+
+// Data untuk legend custom
+const posyanduLegend = computed(() => {
+    return (props.distribusiData || []).map((item, idx) => ({
+        nama: item.nama,
+        color: posyanduColors[idx % posyanduColors.length],
+        total: item.total,
+    }));
+});
 
 const chartOptions = {
     responsive: true,
@@ -216,12 +241,12 @@ const statCards = computed(() => [
             </div>
         </template>
 
-        <div class="space-y-6">
+        <div class="space-y-4">
             <!-- Loading State -->
             <div v-if="isLoading">
                 <CardSkeleton />
                 
-                <div class="grid gap-4 lg:grid-cols-7 mt-6">
+                <div class="grid gap-3 lg:grid-cols-7 mt-4">
                     <Card class="lg:col-span-4">
                         <CardHeader>
                             <Skeleton class="h-6 w-40" />
@@ -255,25 +280,25 @@ const statCards = computed(() => [
                         alerts.stunting_count > 0 ||
                         alerts.hipertensi_count > 0)
                 "
-                class="grid gap-4 sm:grid-cols-3"
+                class="grid gap-3 sm:grid-cols-3"
             >
                 <Card
                     v-if="alerts.kek_count > 0"
                     class="border-destructive/50 bg-destructive/5"
                 >
                     <CardHeader
-                        class="flex flex-row items-center justify-between space-y-0 pb-2"
+                        class="flex flex-row items-center justify-between space-y-0 pb-1"
                     >
-                        <CardTitle class="text-sm font-medium text-destructive"
+                        <CardTitle class="text-xs font-medium text-destructive"
                             >KEK (Kurang Energi Kronis)</CardTitle
                         >
-                        <Activity class="h-4 w-4 text-destructive" />
+                        <Activity class="h-3.5 w-3.5 text-destructive" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-2xl font-bold text-destructive">
+                        <div class="text-lg font-bold text-destructive">
                             {{ alerts.kek_count }}
                         </div>
-                        <p class="mt-1 text-xs text-destructive/70">
+                        <p class="mt-0.5 text-xs text-destructive/70">
                             Ibu hamil dengan LILA &lt; 23.5 cm
                         </p>
                     </CardContent>
@@ -283,18 +308,18 @@ const statCards = computed(() => [
                     class="border-destructive/50 bg-destructive/5"
                 >
                     <CardHeader
-                        class="flex flex-row items-center justify-between space-y-0 pb-2"
+                        class="flex flex-row items-center justify-between space-y-0 pb-1"
                     >
-                        <CardTitle class="text-sm font-medium text-destructive"
+                        <CardTitle class="text-xs font-medium text-destructive"
                             >Risiko Stunting</CardTitle
                         >
-                        <Baby class="h-4 w-4 text-destructive" />
+                        <Baby class="h-3.5 w-3.5 text-destructive" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-2xl font-bold text-destructive">
+                        <div class="text-lg font-bold text-destructive">
                             {{ alerts.stunting_count }}
                         </div>
-                        <p class="mt-1 text-xs text-destructive/70">
+                        <p class="mt-0.5 text-xs text-destructive/70">
                             Balita dengan BB/TB rendah
                         </p>
                     </CardContent>
@@ -304,18 +329,18 @@ const statCards = computed(() => [
                     class="border-destructive/50 bg-destructive/5"
                 >
                     <CardHeader
-                        class="flex flex-row items-center justify-between space-y-0 pb-2"
+                        class="flex flex-row items-center justify-between space-y-0 pb-1"
                     >
-                        <CardTitle class="text-sm font-medium text-destructive"
+                        <CardTitle class="text-xs font-medium text-destructive"
                             >Hipertensi</CardTitle
                         >
-                        <Activity class="h-4 w-4 text-destructive" />
+                        <Activity class="h-3.5 w-3.5 text-destructive" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-2xl font-bold text-destructive">
+                        <div class="text-lg font-bold text-destructive">
                             {{ alerts.hipertensi_count }}
                         </div>
-                        <p class="mt-1 text-xs text-destructive/70">
+                        <p class="mt-0.5 text-xs text-destructive/70">
                             Lansia dengan tensi tinggi
                         </p>
                     </CardContent>
@@ -340,10 +365,10 @@ const statCards = computed(() => [
                     <div
                         v-for="j in jadwalValidationQueue"
                         :key="j.id"
-                        class="flex items-center justify-between rounded-lg border border-amber-200 bg-white p-3"
+                        class="flex items-center justify-between rounded-lg border border-amber-200 bg-white p-2"
                     >
                         <div>
-                            <p class="text-sm font-medium">
+                            <p class="text-xs font-medium">
                                 {{ j.posyandu_nama }}
                             </p>
                             <p class="text-xs text-muted-foreground">
@@ -375,10 +400,10 @@ const statCards = computed(() => [
                     <div
                         v-for="j in myPosyanduJadwal"
                         :key="j.id"
-                        class="flex items-center justify-between rounded-lg border p-3"
+                        class="flex items-center justify-between rounded-lg border p-2"
                     >
                         <div>
-                            <p class="text-sm font-medium">
+                            <p class="text-xs font-medium">
                                 {{ j.posyandu_nama }}
                             </p>
                             <p class="text-xs text-muted-foreground">
@@ -399,7 +424,7 @@ const statCards = computed(() => [
             </Card>
 
             <!-- Stats -->
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Card
                     v-for="stat in statCards"
                     :key="stat.title"
@@ -410,10 +435,10 @@ const statCards = computed(() => [
                     "
                 >
                     <CardHeader
-                        class="flex flex-row items-center justify-between space-y-0 pb-2"
+                        class="flex flex-row items-center justify-between space-y-0 pb-1"
                     >
                         <CardTitle
-                            class="text-sm font-medium"
+                            class="text-xs font-medium"
                             :class="
                                 stat.variant === 'primary'
                                     ? 'text-primary-foreground/80'
@@ -424,7 +449,7 @@ const statCards = computed(() => [
                         </CardTitle>
                         <component
                             :is="stat.icon"
-                            class="h-4 w-4"
+                            class="h-3.5 w-3.5"
                             :class="
                                 stat.variant === 'primary'
                                     ? 'text-primary-foreground/70'
@@ -432,10 +457,10 @@ const statCards = computed(() => [
                             "
                         />
                     </CardHeader>
-                    <CardContent>
-                        <div class="text-2xl font-bold">{{ stat.value }}</div>
+                    <CardContent class="pt-2">
+                        <div class="text-xl font-bold">{{ stat.value }}</div>
                         <p
-                            class="mt-1 text-xs"
+                            class="mt-0.5 text-xs"
                             :class="
                                 stat.variant === 'primary'
                                     ? 'text-primary-foreground/70'
@@ -449,108 +474,70 @@ const statCards = computed(() => [
             </div>
 
             <!-- Chart + Jadwal -->
-            <div class="grid gap-4 lg:grid-cols-7">
-                <Card class="lg:col-span-4">
-                    <CardHeader>
-                        <CardTitle>Trend Pemeriksaan</CardTitle>
-                        <CardDescription
-                            >Jumlah kunjungan 6 bulan terakhir</CardDescription
+            <Card class="lg:col-span-7">
+                <CardHeader
+                    class="flex flex-row items-center justify-between pb-2"
+                >
+                    <div>
+                        <CardTitle class="text-base">Jadwal Terdekat</CardTitle>
+                        <CardDescription class="text-xs">Agenda posyandu</CardDescription>
+                    </div>
+                    <Link :href="route('jadwal-posyandu.index')">
+                        <Button variant="ghost" size="sm"
+                            >Lihat Semua</Button
                         >
-                    </CardHeader>
-                    <CardContent class="h-[300px]">
-                        <Line
-                            :data="processedChartData"
-                            :options="chartOptions"
-                        />
-                    </CardContent>
-                </Card>
-
-                <Card class="lg:col-span-3">
-                    <CardHeader>
-                        <CardTitle>Distribusi Kader</CardTitle>
-                        <CardDescription>Per Posyandu</CardDescription>
-                    </CardHeader>
-                    <CardContent class="h-[300px]">
-                        <Bar
-                            v-if="distribusiData?.length"
-                            :data="processedBarChartData"
-                            :options="barChartOptions"
-                        />
-                        <div
-                            v-else
-                            class="flex h-full flex-col items-center justify-center text-muted-foreground"
-                        >
-                            <Users class="mb-2 h-10 w-10 opacity-20" />
-                            <p class="text-sm">Data tidak tersedia</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card class="lg:col-span-7">
-                    <CardHeader
-                        class="flex flex-row items-center justify-between"
+                    </Link>
+                </CardHeader>
+                <CardContent class="space-y-2 pt-2">
+                    <div
+                        v-for="j in upcomingJadwal"
+                        :key="j.id"
+                        class="flex items-center gap-2 rounded-lg border p-2 transition-colors hover:bg-muted/50"
                     >
-                        <div>
-                            <CardTitle>Jadwal Terdekat</CardTitle>
-                            <CardDescription>Agenda posyandu</CardDescription>
+                        <div
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                        >
+                            <Calendar class="h-3.5 w-3.5" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p
+                                class="truncate text-xs leading-none font-medium"
+                            >
+                                {{ j.posyandu_nama }}
+                            </p>
+                            <p
+                                class="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"
+                            >
+                                <Clock class="h-2.5 w-2.5" />
+                                {{ j.tanggal }} • {{ j.waktu }}
+                            </p>
                         </div>
                         <Link :href="route('jadwal-posyandu.index')">
-                            <Button variant="ghost" size="sm"
-                                >Lihat Semua</Button
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                class="h-8 w-8 shrink-0"
                             >
+                                <ArrowRight class="h-4 w-4" />
+                            </Button>
                         </Link>
-                    </CardHeader>
-                    <CardContent class="space-y-3">
-                        <div
-                            v-for="j in upcomingJadwal"
-                            :key="j.id"
-                            class="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50"
-                        >
-                            <div
-                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-                            >
-                                <Calendar class="h-4 w-4" />
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <p
-                                    class="truncate text-sm leading-none font-medium"
-                                >
-                                    {{ j.posyandu_nama }}
-                                </p>
-                                <p
-                                    class="mt-1 flex items-center gap-1 text-xs text-muted-foreground"
-                                >
-                                    <Clock class="h-3 w-3" />
-                                    {{ j.tanggal }} • {{ j.waktu }}
-                                </p>
-                            </div>
-                            <Link :href="route('jadwal-posyandu.index')">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    class="h-8 w-8 shrink-0"
-                                >
-                                    <ArrowRight class="h-4 w-4" />
-                                </Button>
-                            </Link>
-                        </div>
-                        <div
-                            v-if="!upcomingJadwal?.length"
-                            class="flex flex-col items-center justify-center py-8 text-muted-foreground"
-                        >
-                            <Calendar class="mb-2 h-10 w-10 opacity-20" />
-                            <p class="text-sm">Tidak ada jadwal terdekat</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
+                    <div
+                        v-if="!upcomingJadwal?.length"
+                        class="flex flex-col items-center justify-center py-8 text-muted-foreground"
+                    >
+                        <Calendar class="mb-2 h-10 w-10 opacity-20" />
+                        <p class="text-sm">Tidak ada jadwal terdekat</p>
+                    </div>
+                </CardContent>
+            </Card>
 
             <!-- Recent Activity -->
             <Card>
-                <CardHeader class="flex flex-row items-center justify-between">
+                <CardHeader class="flex flex-row items-center justify-between pb-2">
                     <div>
-                        <CardTitle>Aktivitas Terbaru</CardTitle>
-                        <CardDescription
+                        <CardTitle class="text-base">Aktivitas Terbaru</CardTitle>
+                        <CardDescription class="text-xs"
                             >Pemeriksaan yang baru diinput</CardDescription
                         >
                     </div>
@@ -563,11 +550,11 @@ const statCards = computed(() => [
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Peserta</TableHead>
-                            <TableHead>Kategori</TableHead>
-                            <TableHead>Tanggal</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead class="text-right">Aksi</TableHead>
+                            <TableHead class="text-xs h-8">Peserta</TableHead>
+                            <TableHead class="text-xs h-8">Kategori</TableHead>
+                            <TableHead class="text-xs h-8">Tanggal</TableHead>
+                            <TableHead class="text-xs h-8">Status</TableHead>
+                            <TableHead class="text-xs text-right h-8">Aksi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -575,33 +562,34 @@ const statCards = computed(() => [
                             v-for="item in recentAktivitas"
                             :key="item.id"
                         >
-                            <TableCell class="font-medium">{{
+                            <TableCell class="font-medium text-xs py-2">{{
                                 item.nama
                             }}</TableCell>
-                            <TableCell>
-                                <Badge variant="secondary">{{
+                            <TableCell class="text-xs py-2">
+                                <Badge variant="secondary" class="text-xs">{{
                                     item.type_label
                                 }}</Badge>
                             </TableCell>
-                            <TableCell class="text-muted-foreground">{{
+                            <TableCell class="text-muted-foreground text-xs py-2">{{
                                 item.tanggal
                             }}</TableCell>
-                            <TableCell>
+                            <TableCell class="text-xs py-2">
                                 <Badge
                                     :variant="
                                         item.status === 'Hadir'
                                             ? 'default'
                                             : 'secondary'
                                     "
+                                    class="text-xs"
                                 >
                                     {{ item.status }}
                                 </Badge>
                             </TableCell>
-                            <TableCell class="text-right">
+                            <TableCell class="text-right py-2">
                                 <Link
                                     :href="route('pemeriksaan.show', item.id)"
                                 >
-                                    <Button variant="ghost" size="sm"
+                                    <Button variant="ghost" size="sm" class="h-7 text-xs"
                                         >Detail</Button
                                     >
                                 </Link>
@@ -618,6 +606,64 @@ const statCards = computed(() => [
                     </TableBody>
                 </Table>
             </Card>
+
+            <!-- Charts at the bottom -->
+            <div class="grid gap-3 lg:grid-cols-2">
+                <Card>
+                    <CardHeader class="pb-2">
+                        <CardTitle class="text-base">Trend Pemeriksaan</CardTitle>
+                        <CardDescription class="text-xs"
+                            >Jumlah kunjungan 6 bulan terakhir</CardDescription
+                        >
+                    </CardHeader>
+                    <CardContent class="h-[250px] pt-2">
+                        <Line
+                            :data="processedChartData"
+                            :options="chartOptions"
+                        />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader class="pb-2">
+                        <CardTitle class="text-base">Distribusi Kader</CardTitle>
+                        <CardDescription class="text-xs">Per Posyandu</CardDescription>
+                    </CardHeader>
+                    <CardContent class="space-y-3 pt-2">
+                        <div class="h-[250px]">
+                            <Bar
+                                v-if="distribusiData?.length"
+                                :data="processedBarChartData"
+                                :options="barChartOptions"
+                            />
+                            <div
+                                v-else
+                                class="flex h-full flex-col items-center justify-center text-muted-foreground"
+                            >
+                                <Users class="mb-2 h-10 w-10 opacity-20" />
+                                <p class="text-xs">Data tidak tersedia</p>
+                            </div>
+                        </div>
+                        <!-- Custom Legend -->
+                        <div v-if="posyanduLegend.length" class="space-y-1.5 border-t pt-2">
+                            <p class="text-xs font-medium text-muted-foreground">Keterangan:</p>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <div
+                                    v-for="(item, idx) in posyanduLegend"
+                                    :key="idx"
+                                    class="flex items-center gap-2"
+                                >
+                                    <div
+                                        class="h-3 w-3 rounded-full shrink-0"
+                                        :style="{ backgroundColor: item.color }"
+                                    ></div>
+                                    <span class="text-xs truncate">{{ item.nama }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
             </template>
         </div>
     </AuthenticatedLayout>

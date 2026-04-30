@@ -12,7 +12,6 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { reactive } from 'vue'
 import { Printer, Download, Activity, User, Baby, Users, FileText } from 'lucide-vue-next'
-import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 
 interface Laporan {
     id: string
@@ -205,7 +204,7 @@ function getPesertaTypeLabel(type: string) {
             </Card>
 
             <!-- Stats -->
-            <div class="grid gap-4 md:grid-cols-4">
+            <div class="grid gap-4 md:grid-cols-4 print:hidden">
                 <Card>
                     <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
                         <CardTitle class="text-sm font-medium text-muted-foreground">Ibu Hamil</CardTitle>
@@ -245,19 +244,23 @@ function getPesertaTypeLabel(type: string) {
             </div>
 
             <!-- Report Table -->
-            <Card>
+            <Card class="print:shadow-none print:border-none">
                 <!-- Print Header -->
-                <CardHeader class="text-center border-b pb-6 hidden print:block">
-                    <div class="flex justify-center mb-4">
-                        <ApplicationLogo class="w-16 h-16" />
+                <div class="hidden print:block text-center border-b-2 border-black pb-4 mb-6 pt-4">
+                    <h2 class="text-2xl font-bold uppercase tracking-wide m-0">Sistem Informasi Posyandu (SIPOS)</h2>
+                    <p class="text-sm text-gray-700 mt-1 mb-3">Posyandu Desa Belumbang, Kec. Kerambitan, Kab. Tabanan, Bali</p>
+                    <h3 class="text-lg font-semibold m-0">Laporan Rekapitulasi Pemeriksaan Kesehatan</h3>
+                    <p class="text-sm text-gray-600 mt-1 mb-4">Periode: {{ bulanOptions.find(b => b.value === filterState.bulan)?.label }} {{ filterState.tahun }}</p>
+                    
+                    <div class="flex justify-center gap-8 text-sm font-medium">
+                        <span>Ibu Hamil: {{ stats.total_bumil }}</span>
+                        <span>Balita: {{ stats.total_balita }}</span>
+                        <span>Lansia: {{ stats.total_lansia }}</span>
+                        <span>Total Kehadiran: {{ stats.total_hadir }}</span>
                     </div>
-                    <CardTitle class="text-2xl font-bold uppercase">Sistem Informasi Posyandu (SIPOS)</CardTitle>
-                    <CardDescription>
-                        Laporan Rekapitulasi Pemeriksaan Kesehatan<br />
-                        Periode {{ bulanOptions.find(b => b.value === filterState.bulan)?.label }} {{ filterState.tahun }}
-                    </CardDescription>
-                </CardHeader>
-                <Table>
+                </div>
+                
+                <Table class="print:text-sm">
                     <TableHeader>
                         <TableRow>
                             <TableHead>Tgl. Periksa</TableHead>
@@ -304,6 +307,15 @@ function getPesertaTypeLabel(type: string) {
                         </TableRow>
                     </TableBody>
                 </Table>
+                
+                <!-- Print Signature -->
+                <div class="hidden print:flex justify-end mt-12 pr-12">
+                    <div class="text-center">
+                        <p class="mb-16">Mengetahui,</p>
+                        <p class="font-bold underline">Bidan Desa Belumbang</p>
+                        <p class="text-sm">NIP. ......................................</p>
+                    </div>
+                </div>
             </Card>
         </div>
     </AuthenticatedLayout>
@@ -311,8 +323,31 @@ function getPesertaTypeLabel(type: string) {
 
 <style scoped>
 @media print {
+    @page {
+        size: landscape;
+        margin: 1.5cm;
+    }
     nav, button, .print\:hidden {
         display: none !important;
+    }
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background-color: white;
+    }
+    .print\:shadow-none {
+        box-shadow: none !important;
+    }
+    .print\:border-none {
+        border: none !important;
+    }
+    :deep(th), :deep(td) {
+        padding: 0.5rem !important;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    :deep(table) {
+        width: 100%;
+        border-collapse: collapse;
     }
 }
 </style>

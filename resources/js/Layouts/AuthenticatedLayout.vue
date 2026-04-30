@@ -484,95 +484,103 @@ function renderMenuItem(item: NavItem) {
 
         <SidebarInset>
             <!-- Top bar -->
-            <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-                <!-- Mobile menu trigger -->
-                <Sheet v-model:open="mobileMenuOpen">
-                    <SheetTrigger as-child>
-                        <Button variant="ghost" size="icon" class="md:hidden h-8 w-8">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" class="w-72 p-0 bg-slate-950 text-white border-r-slate-800">
-                        <SheetHeader class="border-b border-slate-800 px-4 py-3">
-                            <SheetTitle class="flex items-center gap-2 text-white">
-                                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                                    <Package2 class="h-4 w-4" />
+            <header class="flex h-14 shrink-0 items-center justify-between gap-2 border-b px-4 print:hidden">
+                <div class="flex items-center gap-2 flex-1">
+                    <!-- Mobile menu trigger -->
+                    <Sheet v-model:open="mobileMenuOpen">
+                        <SheetTrigger as-child>
+                            <Button variant="ghost" size="icon" class="md:hidden h-8 w-8">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" class="w-72 p-0 bg-slate-950 text-white border-r-slate-800">
+                            <SheetHeader class="border-b border-slate-800 px-4 py-3">
+                                <SheetTitle class="flex items-center gap-2 text-white">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white">
+                                        <Package2 class="h-4 w-4" />
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-white">SIPOS</div>
+                                        <div class="text-xs text-slate-400">Posyandu Belumbang</div>
+                                    </div>
+                                </SheetTitle>
+                            </SheetHeader>
+                            <div class="overflow-y-auto p-4">
+                                <!-- Main Menu -->
+                                <div class="mb-4">
+                                    <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Menu Utama</div>
+                                    <div class="space-y-1">
+                                        <a v-for="item in filterByRole(mainNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
+                                            <component :is="item.icon" class="h-4 w-4" />
+                                            <span>{{ item.title }}</span>
+                                        </a>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="text-sm font-semibold text-white">SIPOS</div>
-                                    <div class="text-xs text-slate-400">Posyandu Belumbang</div>
+                                
+                                <!-- Peserta Menu -->
+                                <div v-if="filterByRole(pesertaNavItems).length > 0" class="mb-4">
+                                    <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Data Peserta</div>
+                                    <div class="space-y-1">
+                                        <a v-for="item in filterByRole(pesertaNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
+                                            <component :is="item.icon" class="h-4 w-4" />
+                                            <span>{{ item.title }}</span>
+                                        </a>
+                                    </div>
                                 </div>
-                            </SheetTitle>
-                        </SheetHeader>
-                        <div class="overflow-y-auto p-4">
-                            <!-- Main Menu -->
-                            <div class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Menu Utama</div>
-                                <div class="space-y-1">
-                                    <a v-for="item in filterByRole(mainNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
-                                        <component :is="item.icon" class="h-4 w-4" />
-                                        <span>{{ item.title }}</span>
-                                    </a>
+                                
+                                <!-- Master Data (Admin only) -->
+                                <div v-if="filterByRole(masterNavItems).length > 0" class="mb-4">
+                                    <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Master Data</div>
+                                    <div class="space-y-1">
+                                        <a v-for="item in filterByRole(masterNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
+                                            <component :is="item.icon" class="h-4 w-4" />
+                                            <span>{{ item.title }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Laporan -->
+                                <div v-if="filterByRole(laporanNavItems).length > 0" class="mb-4">
+                                    <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Laporan</div>
+                                    <div class="space-y-1">
+                                        <a v-for="item in filterByRole(laporanNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
+                                            <component :is="item.icon" class="h-4 w-4" />
+                                            <span>{{ item.title }}</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <!-- Peserta Menu -->
-                            <div v-if="filterByRole(pesertaNavItems).length > 0" class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Data Peserta</div>
-                                <div class="space-y-1">
-                                    <a v-for="item in filterByRole(pesertaNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
-                                        <component :is="item.icon" class="h-4 w-4" />
-                                        <span>{{ item.title }}</span>
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <!-- Master Data (Admin only) -->
-                            <div v-if="filterByRole(masterNavItems).length > 0" class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Master Data</div>
-                                <div class="space-y-1">
-                                    <a v-for="item in filterByRole(masterNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
-                                        <component :is="item.icon" class="h-4 w-4" />
-                                        <span>{{ item.title }}</span>
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <!-- Laporan -->
-                            <div v-if="filterByRole(laporanNavItems).length > 0" class="mb-4">
-                                <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Laporan</div>
-                                <div class="space-y-1">
-                                    <a v-for="item in filterByRole(laporanNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
-                                        <component :is="item.icon" class="h-4 w-4" />
-                                        <span>{{ item.title }}</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </SheetContent>
-                </Sheet>
-                
-                <!-- Desktop sidebar trigger -->
-                <SidebarTrigger class="-ml-1 hidden md:flex" />
-                <Separator orientation="vertical" class="mr-2 h-4 hidden md:block" />
-                <div class="flex-1">
-                    <slot name="header" />
+                        </SheetContent>
+                    </Sheet>
+                    
+                    <!-- Desktop sidebar trigger -->
+                    <SidebarTrigger class="-ml-1 hidden md:flex" />
+                    <Separator orientation="vertical" class="mr-2 h-4 hidden md:block" />
+                    
+                    <!-- Header Title Area -->
+                    <div class="flex-1 min-w-0">
+                        <slot name="header" />
+                    </div>
                 </div>
-                <Link :href="route('notifications.index')" class="relative">
-                    <Button variant="ghost" size="icon" class="h-8 w-8">
-                        <Bell class="h-4 w-4" />
-                        <span
-                            v-if="unreadNotifications > 0"
-                            class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground"
-                        >
-                            {{
-                                unreadNotifications > 9
-                                    ? '9+'
-                                    : unreadNotifications
-                            }}
-                        </span>
-                    </Button>
-                </Link>
+
+                <!-- Right Actions Area -->
+                <div class="flex items-center gap-2">
+                    <Link :href="route('notifications.index')" class="relative text-slate-500 hover:text-slate-900 transition-colors">
+                        <Button variant="ghost" size="icon" class="h-8 w-8 hover:bg-slate-100">
+                            <Bell class="h-4 w-4" />
+                            <span 
+                                v-if="unreadNotifications > 0"
+                                class="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white shadow-sm"
+                            >
+                                {{
+                                    unreadNotifications > 9
+                                        ? '9+'
+                                        : unreadNotifications
+                                }}
+                            </span>
+                        </Button>
+                    </Link>
+                </div>
             </header>
 
             <!-- Page content -->
