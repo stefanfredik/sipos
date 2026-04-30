@@ -9,10 +9,43 @@ import {
 } from '@/components/ui/sheet';
 import { BookAIcon, CalendarIcon, ActivityIcon, LayoutDashboardIcon, BellIcon, MenuIcon, Package2Icon, SettingsIcon, UsersIcon } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
+import { Toaster } from '@/components/ui/sonner';
+import { useToast } from '@/Composables/useToast';
+import { usePage } from '@inertiajs/vue3';
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
+const page = usePage();
+const toast = useToast();
+const flash = computed(() => page.props.flash as any);
+
+watch(
+    () => flash.value?.success,
+    (message) => {
+        if (message) {
+            toast.success('Berhasil', message);
+        }
+    },
+);
+
+watch(
+    () => flash.value?.error,
+    (message) => {
+        if (message) {
+            toast.error('Gagal', message);
+        }
+    },
+);
+
+watch(
+    () => (page.props as any).status,
+    (status) => {
+        if (status) {
+            toast.info('Info', status);
+        }
+    },
+);
 
 const navigation = [
     { name: 'Dashboard', href: route('dashboard'), icon: LayoutDashboardIcon, current: route().current('dashboard') },
@@ -24,6 +57,7 @@ const navigation = [
 </script>
 
 <template>
+<Toaster position="top-right" />
 <div class="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
     <div class="hidden border-r border-slate-800 bg-slate-950 text-white md:block">
       <div class="flex h-full max-h-screen flex-col gap-2">

@@ -85,7 +85,6 @@ watch(
             toast.success('Berhasil', message);
         }
     },
-    { immediate: true },
 );
 
 watch(
@@ -95,7 +94,15 @@ watch(
             toast.error('Gagal', message);
         }
     },
-    { immediate: true },
+);
+
+watch(
+    () => (page.props as any).status,
+    (status) => {
+        if (status) {
+            toast.info('Info', status);
+        }
+    },
 );
 
 // Helper to get user initials

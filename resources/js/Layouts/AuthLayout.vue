@@ -1,11 +1,48 @@
 <script setup lang="ts">
+import { Toaster } from '@/components/ui/sonner';
+import { useToast } from '@/Composables/useToast';
+import { usePage } from '@inertiajs/vue3';
+import { computed, watch } from 'vue';
+
 defineProps<{
     title?: string;
 }>();
+
+const page = usePage();
+const toast = useToast();
+const flash = computed(() => page.props.flash as any);
+
+watch(
+    () => flash.value?.success,
+    (message) => {
+        if (message) {
+            toast.success('Berhasil', message);
+        }
+    },
+);
+
+watch(
+    () => flash.value?.error,
+    (message) => {
+        if (message) {
+            toast.error('Gagal', message);
+        }
+    },
+);
+
+watch(
+    () => (page.props as any).status,
+    (status) => {
+        if (status) {
+            toast.info('Info', status);
+        }
+    },
+);
 </script>
 
 <template>
     <div class="auth-root">
+        <Toaster position="top-right" />
         <!-- Left Panel: Branding -->
         <div class="auth-left">
             <!-- Animated blobs -->
