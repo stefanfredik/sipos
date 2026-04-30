@@ -4,45 +4,39 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Bell, CheckCheck, Calendar, ExternalLink } from 'lucide-vue-next'
+import { Bell, CheckCheck, ExternalLink, Clock } from 'lucide-vue-next'
 
 interface Notification {
     id: string
     type: string
-    data: {
-        title: string
-        message: string
-        url?: string
-    }
+    data: { title: string; message: string; url?: string }
     read_at: string | null
     created_at: string
 }
 
 const props = defineProps<{
-    notifications: {
-        data: Notification[]
-        links: any
-        meta?: any
-    }
+    notifications: { data: Notification[]; links: any; meta?: any }
     unreadCount: number
 }>()
 
 function markAsRead(id: string) {
-    router.post(route('notifications.read', id))
+    router.post(route('notifications.read', id), {}, { preserveScroll: true })
 }
 
 function markAllAsRead() {
-    router.post(route('notifications.read-all'))
+    router.post(route('notifications.read-all'), {}, { preserveScroll: true })
 }
 
 function formatDate(date: string) {
     return new Date(date).toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+        day: 'numeric', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit',
     })
+}
+
+function handleClick(notif: Notification) {
+    if (!notif.read_at) markAsRead(notif.id)
+    if (notif.data.url) router.visit(notif.data.url)
 }
 </script>
 
@@ -51,74 +45,93 @@ function formatDate(date: string) {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center gap-2 text-sm text-muted-foreground">
-                <span class="text-foreground font-medium">Notifikasi</span>
-            </div>
-        </template>
-
-        <div class="max-w-3xl mx-auto space-y-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold">Notifikasi</h1>
-                    <p class="text-sm text-muted-foreground">
+                    <h2 class="text-xl font-bold tracking-tight text-gray-900">Notifikasi</h2>
+                    <p class="text-sm text-muted-foreground mt-0.5">
                         {{ unreadCount > 0 ? `${unreadCount} belum dibaca` : 'Semua sudah dibaca' }}
                     </p>
                 </div>
-                <Button v-if="unreadCount > 0" variant="outline" size="sm" @click="markAllAsRead" class="gap-2">
+                <Button v-if="unreadCount > 0" variant="outline" size="sm" @click="markAllAsRead"
+                    class="flex items-center gap-2 rounded-lg border-violet-200 text-violet-700 hover:bg-violet-50">
                     <CheckCheck class="h-4 w-4" />
                     Tandai Semua Dibaca
                 </Button>
             </div>
+        </template>
 
-            <div v-if="notifications.data.length === 0" class="text-center py-12">
-                <Bell class="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 class="text-lg font-medium text-muted-foreground">Tidak ada notifikasi</h3>
-                <p class="text-sm text-muted-foreground">Notifikasi akan muncul di sini.</p>
-            </div>
+        <div class="py-6">
+            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
 
-            <div v-else class="space-y-2">
-                <Card
-                    v-for="notif in notifications.data"
-                    :key="notif.id"
-                    :class="{ 'border-primary/20 bg-primary/5': !notif.read_at }"
-                    class="cursor-pointer transition-colors hover:bg-muted/50"
-                    @click="!notif.read_at && markAsRead(notif.id)"
-                >
-                    <CardContent class="flex items-start gap-4 p-4">
-                        <div class="mt-0.5">
-                            <div
-                                class="h-2 w-2 rounded-full"
-                                :class="notif.read_at ? 'bg-transparent' : 'bg-primary'"
-                            />
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-medium text-sm">{{ notif.data.title }}</p>
-                            <p class="text-sm text-muted-foreground mt-0.5">{{ notif.data.message }}</p>
-                            <p class="text-xs text-muted-foreground mt-2">{{ formatDate(notif.created_at) }}</p>
-                        </div>
-                        <Link v-if="notif.data.url" :href="notif.data.url" @click.stop>
-                            <Button variant="ghost" size="icon" class="h-8 w-8">
-                                <ExternalLink class="h-4 w-4" />
-                            </Button>
-                        </Link>
-                    </CardContent>
-                </Card>
-            </div>
+                <!-- Empty State -->
+                <div v-if="notifications.data.length === 0"
+                    class="flex flex-col items-center justify-center py-20 gap-4">
+                    <div class="p-5 rounded-full bg-gray-100">
+                        <Bell class="h-10 w-10 text-gray-300" />
+                    </div>
+                    <div class="text-center">
+                        <p class="font-semibold text-gray-500 text-base">Tidak ada notifikasi</p>
+                        <p class="text-sm text-muted-foreground mt-1">Notifikasi jadwal dan aktivitas akan muncul di sini.</p>
+                    </div>
+                </div>
 
-            <!-- Pagination -->
-            <div v-if="notifications.links" class="flex justify-center gap-1">
-                <Link
-                    v-for="link in (notifications as any).links"
-                    :key="link.label"
-                    :href="link.url || '#'"
-                    class="px-3 py-1 text-sm rounded-md"
-                    :class="{
-                        'bg-primary text-primary-foreground': link.active,
-                        'hover:bg-muted': !link.active && link.url,
-                        'text-muted-foreground': !link.url,
-                    }"
-                    v-html="link.label"
-                />
+                <!-- Notifications List -->
+                <div v-else class="space-y-2">
+                    <Card v-for="notif in notifications.data" :key="notif.id"
+                        class="border-none shadow-sm bg-white overflow-hidden cursor-pointer hover:shadow-md transition-all"
+                        :class="!notif.read_at ? 'ring-1 ring-violet-200' : ''"
+                        @click="handleClick(notif)">
+                        <div v-if="!notif.read_at" class="h-0.5 w-full bg-gradient-to-r from-violet-500 to-indigo-500" />
+                        <CardContent class="p-4 flex items-start gap-4">
+                            <!-- Unread dot -->
+                            <div class="mt-1 shrink-0">
+                                <div class="h-2.5 w-2.5 rounded-full transition-colors"
+                                    :class="notif.read_at ? 'bg-gray-200' : 'bg-violet-500'" />
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-sm text-gray-800" :class="!notif.read_at ? '' : 'text-gray-600'">
+                                    {{ notif.data.title }}
+                                </p>
+                                <p class="text-sm text-muted-foreground mt-0.5 leading-relaxed">
+                                    {{ notif.data.message }}
+                                </p>
+                                <p class="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+                                    <Clock class="h-3 w-3" />
+                                    {{ formatDate(notif.created_at) }}
+                                </p>
+                            </div>
+
+                            <!-- Status badge + link -->
+                            <div class="flex items-center gap-2 shrink-0">
+                                <Badge v-if="!notif.read_at"
+                                    class="bg-violet-50 text-violet-700 border-violet-200 text-xs font-semibold">
+                                    Baru
+                                </Badge>
+                                <Link v-if="notif.data.url" :href="notif.data.url" @click.stop>
+                                    <Button variant="ghost" size="icon" class="h-8 w-8 text-gray-400 hover:text-violet-600 hover:bg-violet-50">
+                                        <ExternalLink class="h-4 w-4" />
+                                    </Button>
+                                </Link>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <!-- Pagination -->
+                <div v-if="(notifications as any).links?.length > 3" class="flex justify-center gap-1 mt-6">
+                    <Link v-for="link in (notifications as any).links" :key="link.label"
+                        :href="link.url || '#'"
+                        class="inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2.5 text-sm transition-colors"
+                        :class="{
+                            'bg-violet-600 text-white font-semibold shadow-sm': link.active,
+                            'hover:bg-gray-100 text-gray-600': !link.active && link.url,
+                            'text-gray-300 pointer-events-none': !link.url,
+                        }"
+                        v-html="link.label"
+                    />
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>

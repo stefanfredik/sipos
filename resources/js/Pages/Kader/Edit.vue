@@ -1,40 +1,30 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { ArrowLeft, Loader2, Save, User } from 'lucide-vue-next';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Save, User, Phone, MapPin, Home, Lock, ChevronRight, AtSign } from 'lucide-vue-next';
 import { useToast } from '@/Composables/useToast';
 
+interface KaderEdit {
+    id: string;
+    user_id: string;
+    posyandu_id: string;
+    nama: string;
+    foto: string | null;
+    alamat: string;
+    no_telp: string;
+    jenis_kelamin: string;
+    username: string;
+}
+
 const props = defineProps<{
-    kader: {
-        id: string;
-        user_id: string;
-        posyandu_id: string;
-        nama: string;
-        foto: string | null;
-        alamat: string;
-        no_telp: string;
-        jenis_kelamin: string;
-        username: string;
-    };
+    kader: KaderEdit;
     posyandu: Array<{ id: string; nama_posyandu: string }>;
 }>();
 
@@ -51,192 +41,165 @@ const form = useForm({
     jenis_kelamin: props.kader.jenis_kelamin,
 });
 
+function handleFoto(e: Event) {
+    form.foto_kader = (e.target as HTMLInputElement).files?.[0] || null;
+}
+
 const submit = () => {
     form.post(route('kader.update', props.kader.id), {
         forceFormData: true,
-        onSuccess: () => {
-            toast.success('Berhasil', 'Data kader berhasil diperbarui.');
-        },
-        onError: () => {
-            toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.');
-        },
+        onSuccess: () => toast.success('Berhasil', 'Data kader berhasil diperbarui.'),
+        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.'),
     });
 };
 </script>
 
 <template>
     <Head title="Edit Kader" />
-
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center gap-4">
-                <Link :href="route('kader.index')">
-                    <Button variant="outline" size="icon">
-                        <ArrowLeft class="h-4 w-4" />
-                    </Button>
-                </Link>
-                <h2 class="text-lg font-semibold">Edit Kader: {{ kader.nama }}</h2>
+            <div class="flex items-center gap-3">
+                <Button variant="ghost" size="icon" @click="router.get(route('kader.index'))"
+                    class="h-9 w-9 rounded-full hover:bg-white/50">
+                    <ArrowLeft class="h-5 w-5 text-gray-600" />
+                </Button>
+                <div>
+                    <h2 class="text-xl font-bold tracking-tight text-gray-900">Edit Kader</h2>
+                    <div class="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
+                        <span>Data Kader</span>
+                        <ChevronRight class="h-3 w-3" />
+                        <span class="font-medium text-gray-700">{{ kader.nama }}</span>
+                    </div>
+                </div>
             </div>
         </template>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
-                <form @submit.prevent="submit">
-                    <!-- Profile Picture Card -->
-                    <Card class="mb-6">
-                        <CardHeader>
-                            <CardTitle>Foto Profil</CardTitle>
+        <div class="py-6">
+            <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
+                <form @submit.prevent="submit" class="space-y-5">
+
+                    <!-- Foto Profil -->
+                    <Card class="border-none shadow-sm bg-white">
+                        <CardHeader class="pb-3 border-b border-gray-100">
+                            <CardTitle class="flex items-center gap-2 text-base font-semibold text-gray-700">
+                                <div class="p-1.5 rounded-lg bg-violet-50 text-violet-600"><User class="h-4 w-4" /></div>
+                                Foto Profil
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent class="flex flex-col items-center gap-6">
-                            <div class="h-32 w-32 rounded-full bg-muted flex items-center justify-center overflow-hidden border-4">
-                                <img
-                                    v-if="kader.foto && !form.foto_kader"
-                                    :src="kader.foto"
-                                    :alt="kader.nama"
-                                    class="h-full w-full object-cover"
-                                />
-                                <User v-else-if="!form.foto_kader" class="h-16 w-16 text-muted-foreground" />
-                                <span v-else class="text-xs text-center p-2 text-muted-foreground">File Baru</span>
+                        <CardContent class="p-5 flex flex-col sm:flex-row items-center gap-5">
+                            <div class="h-20 w-20 rounded-full overflow-hidden bg-violet-50 flex items-center justify-center border-4 border-white shadow shrink-0">
+                                <img v-if="kader.foto && !form.foto_kader" :src="kader.foto" :alt="kader.nama" class="h-full w-full object-cover" />
+                                <User v-else class="h-8 w-8 text-violet-400" />
                             </div>
-                            <div class="w-full">
-                                <Label for="foto_kader" class="text-sm">Update Foto Profil</Label>
-                                <Input
-                                    id="foto_kader"
-                                    type="file"
-                                    accept="image/*"
-                                    @input="form.foto_kader = ($event.target as HTMLInputElement).files?.[0] || null"
-                                    :class="{ 'border-destructive': form.errors.foto_kader }"
-                                    class="mt-2"
-                                />
-                                <p v-if="form.errors.foto_kader" class="text-sm text-destructive mt-1">
-                                    {{ form.errors.foto_kader }}
-                                </p>
+                            <div class="flex-1 w-full space-y-1.5">
+                                <Label class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ganti Foto</Label>
+                                <Input type="file" accept="image/*" @change="handleFoto"
+                                    :class="{ 'border-destructive': form.errors.foto_kader }" />
+                                <p v-if="form.errors.foto_kader" class="text-sm text-destructive">{{ form.errors.foto_kader }}</p>
+                                <p class="text-xs text-muted-foreground">Biarkan kosong untuk tidak mengubah foto.</p>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <!-- Account Information Card -->
-                    <Card class="mb-6">
-                        <CardHeader>
-                            <CardTitle>Informasi Akun</CardTitle>
-                            <CardDescription>Ubah username untuk login</CardDescription>
+                    <!-- Akun -->
+                    <Card class="border-none shadow-sm bg-white">
+                        <CardHeader class="pb-3 border-b border-gray-100">
+                            <CardTitle class="flex items-center gap-2 text-base font-semibold text-gray-700">
+                                <div class="p-1.5 rounded-lg bg-violet-50 text-violet-600"><Lock class="h-4 w-4" /></div>
+                                Informasi Akun
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent class="space-y-4">
-                            <div class="space-y-2">
-                                <Label for="username">Username</Label>
-                                <Input
-                                    id="username"
-                                    v-model="form.username"
-                                    :class="{ 'border-destructive': form.errors.username }"
-                                />
-                                <p v-if="form.errors.username" class="text-sm text-destructive">
-                                    {{ form.errors.username }}
-                                </p>
+                        <CardContent class="p-5 space-y-1.5">
+                            <Label class="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                <AtSign class="h-3 w-3" /> Username
+                            </Label>
+                            <Input v-model="form.username" :class="{ 'border-destructive': form.errors.username }" />
+                            <p v-if="form.errors.username" class="text-sm text-destructive">{{ form.errors.username }}</p>
+                        </CardContent>
+                    </Card>
+
+                    <!-- Profil -->
+                    <Card class="border-none shadow-sm bg-white">
+                        <CardHeader class="pb-3 border-b border-gray-100">
+                            <CardTitle class="flex items-center gap-2 text-base font-semibold text-gray-700">
+                                <div class="p-1.5 rounded-lg bg-violet-50 text-violet-600"><User class="h-4 w-4" /></div>
+                                Informasi Profil
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <Label class="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                    <Home class="h-3 w-3" /> Unit Posyandu
+                                </Label>
+                                <Select v-model="form.posyandu_id">
+                                    <SelectTrigger :class="{ 'border-destructive': form.errors.posyandu_id }">
+                                        <SelectValue placeholder="Pilih Posyandu" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="p in posyandu" :key="p.id" :value="p.id">{{ p.nama_posyandu }}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <p v-if="form.errors.posyandu_id" class="text-sm text-destructive">{{ form.errors.posyandu_id }}</p>
+                            </div>
+                            <div class="space-y-1.5">
+                                <Label class="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                    <User class="h-3 w-3" /> Nama Lengkap
+                                </Label>
+                                <Input v-model="form.nama_kader" :class="{ 'border-destructive': form.errors.nama_kader }" />
+                                <p v-if="form.errors.nama_kader" class="text-sm text-destructive">{{ form.errors.nama_kader }}</p>
+                            </div>
+                            <div class="space-y-1.5">
+                                <Label class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Jenis Kelamin</Label>
+                                <Select v-model="form.jenis_kelamin">
+                                    <SelectTrigger :class="{ 'border-destructive': form.errors.jenis_kelamin }">
+                                        <SelectValue placeholder="Pilih Jenis Kelamin" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="L">Laki-laki</SelectItem>
+                                        <SelectItem value="P">Perempuan</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <p v-if="form.errors.jenis_kelamin" class="text-sm text-destructive">{{ form.errors.jenis_kelamin }}</p>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <!-- Profile Information Card -->
-                    <Card class="mb-6">
-                        <CardHeader>
-                            <CardTitle>Informasi Profil</CardTitle>
-                            <CardDescription>Data pribadi kader</CardDescription>
+                    <!-- Kontak & Alamat -->
+                    <Card class="border-none shadow-sm bg-white">
+                        <CardHeader class="pb-3 border-b border-gray-100">
+                            <CardTitle class="flex items-center gap-2 text-base font-semibold text-gray-700">
+                                <div class="p-1.5 rounded-lg bg-violet-50 text-violet-600"><Phone class="h-4 w-4" /></div>
+                                Kontak & Alamat
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent class="space-y-6">
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div class="space-y-2">
-                                    <Label for="posyandu_id">Unit Posyandu</Label>
-                                    <Select v-model="form.posyandu_id">
-                                        <SelectTrigger :class="{ 'border-destructive': form.errors.posyandu_id }">
-                                            <SelectValue placeholder="Pilih Posyandu" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="p in posyandu" :key="p.id" :value="p.id">
-                                                {{ p.nama_posyandu }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <p v-if="form.errors.posyandu_id" class="text-sm text-destructive">
-                                        {{ form.errors.posyandu_id }}
-                                    </p>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <Label for="nama_kader">Nama Lengkap</Label>
-                                    <Input
-                                        id="nama_kader"
-                                        v-model="form.nama_kader"
-                                        :class="{ 'border-destructive': form.errors.nama_kader }"
-                                    />
-                                    <p v-if="form.errors.nama_kader" class="text-sm text-destructive">
-                                        {{ form.errors.nama_kader }}
-                                    </p>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <Label for="jenis_kelamin">Jenis Kelamin</Label>
-                                    <Select v-model="form.jenis_kelamin">
-                                        <SelectTrigger :class="{ 'border-destructive': form.errors.jenis_kelamin }">
-                                            <SelectValue placeholder="Pilih Jenis Kelamin" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="L">Laki-laki</SelectItem>
-                                            <SelectItem value="P">Perempuan</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <p v-if="form.errors.jenis_kelamin" class="text-sm text-destructive">
-                                        {{ form.errors.jenis_kelamin }}
-                                    </p>
-                                </div>
+                        <CardContent class="p-5 space-y-4">
+                            <div class="space-y-1.5">
+                                <Label class="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                    <Phone class="h-3 w-3" /> No. Telepon
+                                </Label>
+                                <Input v-model="form.no_telp" :class="{ 'border-destructive': form.errors.no_telp }" />
+                                <p v-if="form.errors.no_telp" class="text-sm text-destructive">{{ form.errors.no_telp }}</p>
+                            </div>
+                            <Separator class="bg-gray-100" />
+                            <div class="space-y-1.5">
+                                <Label class="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                    <MapPin class="h-3 w-3" /> Alamat Lengkap
+                                </Label>
+                                <Textarea v-model="form.alamat" rows="3" class="resize-none"
+                                    :class="{ 'border-destructive': form.errors.alamat }" />
+                                <p v-if="form.errors.alamat" class="text-sm text-destructive">{{ form.errors.alamat }}</p>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <!-- Contact Information Card -->
-                    <Card class="mb-6">
-                        <CardHeader>
-                            <CardTitle>Informasi Kontak</CardTitle>
-                            <CardDescription>Nomor telepon dan alamat</CardDescription>
-                        </CardHeader>
-                        <CardContent class="space-y-6">
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div class="space-y-2">
-                                    <Label for="no_telp">No. Telepon</Label>
-                                    <Input
-                                        id="no_telp"
-                                        v-model="form.no_telp"
-                                        :class="{ 'border-destructive': form.errors.no_telp }"
-                                    />
-                                    <p v-if="form.errors.no_telp" class="text-sm text-destructive">
-                                        {{ form.errors.no_telp }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-2">
-                                <Label for="alamat">Alamat Lengkap</Label>
-                                <Textarea
-                                    id="alamat"
-                                    v-model="form.alamat"
-                                    rows="4"
-                                    :class="{ 'border-destructive': form.errors.alamat }"
-                                />
-                                <p v-if="form.errors.alamat" class="text-sm text-destructive">
-                                    {{ form.errors.alamat }}
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <!-- Action Buttons -->
-                    <div class="flex justify-end gap-4">
-                        <Link :href="route('kader.index')">
-                            <Button variant="ghost" type="button">Batal</Button>
-                        </Link>
-                        <Button type="submit" :disabled="form.processing">
-                            <Loader2 v-if="form.processing" class="mr-2 h-4 w-4 animate-spin" />
-                            <Save v-else class="mr-2 h-4 w-4" />
-                            Simpan Perubahan
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-2 pb-6">
+                        <Button type="button" variant="ghost" @click="router.get(route('kader.index'))" class="text-gray-500">Batalkan</Button>
+                        <Button type="submit" :disabled="form.processing"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg shadow-sm shadow-blue-200 flex items-center gap-2">
+                            <div v-if="form.processing" class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                            <Save v-else class="h-4 w-4" />
+                            <span class="font-semibold">{{ form.processing ? 'Menyimpan...' : 'Simpan Perubahan' }}</span>
                         </Button>
                     </div>
                 </form>

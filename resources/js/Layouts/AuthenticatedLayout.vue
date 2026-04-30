@@ -63,6 +63,7 @@ import {
     User,
     Package2,
     Bell,
+    IdCard,
 } from 'lucide-vue-next';
 import { Badge } from '@/components/ui/badge';
 import { Toaster } from '@/components/ui/sonner';
@@ -242,6 +243,16 @@ const laporanNavItems = computed<NavItem[]>(() => [
     },
 ]);
 
+const portalNavItems = computed<NavItem[]>(() => [
+    {
+        title: 'Portal KMS',
+        icon: IdCard,
+        route: 'portal.index',
+        active: isActiveAny('portal.index', 'portal.kms'),
+        roles: ['peserta'],
+    },
+]);
+
 // Filter items by role
 function filterByRole(items: NavItem[]): NavItem[] {
     return items.filter((item) => hasRole(...item.roles));
@@ -369,6 +380,29 @@ function renderMenuItem(item: NavItem) {
                         <SidebarMenu>
                             <SidebarMenuItem
                                 v-for="item in filterByRole(laporanNavItems)"
+                                :key="item.title"
+                            >
+                                <SidebarMenuButton
+                                    as-child
+                                    :data-active="item.active"
+                                >
+                                    <Link :href="route(item.route!)">
+                                        <component :is="item.icon" />
+                                        <span>{{ item.title }}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
+                <!-- Portal Peserta -->
+                <SidebarGroup v-if="filterByRole(portalNavItems).length > 0">
+                    <SidebarGroupLabel class="text-slate-500 font-bold uppercase tracking-wider">Layanan Saya</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            <SidebarMenuItem
+                                v-for="item in filterByRole(portalNavItems)"
                                 :key="item.title"
                             >
                                 <SidebarMenuButton
@@ -544,6 +578,17 @@ function renderMenuItem(item: NavItem) {
                                     <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Laporan</div>
                                     <div class="space-y-1">
                                         <a v-for="item in filterByRole(laporanNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
+                                            <component :is="item.icon" class="h-4 w-4" />
+                                            <span>{{ item.title }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Portal Peserta -->
+                                <div v-if="filterByRole(portalNavItems).length > 0" class="mb-4">
+                                    <div class="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Layanan Saya</div>
+                                    <div class="space-y-1">
+                                        <a v-for="item in filterByRole(portalNavItems)" :key="item.title" :href="route(item.route!)" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-slate-900 hover:text-white" :class="item.active ? 'bg-slate-900 text-white font-medium' : 'text-slate-400'">
                                             <component :is="item.icon" class="h-4 w-4" />
                                             <span>{{ item.title }}</span>
                                         </a>

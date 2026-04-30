@@ -24,6 +24,8 @@ class UpdatePemeriksaanRequest extends FormRequest
         return [
             'tgl_pemeriksaan' => ['sometimes', 'required', 'date'],
             'hadir' => ['sometimes', 'required', 'boolean'],
+            'kader_id' => ['nullable', 'string', 'size:26'],
+            'bidan_id' => ['nullable', 'string', 'size:26'],
             
             'berat_badan' => ['nullable', 'numeric', 'min:0'],
             'tinggi_badan' => ['nullable', 'numeric', 'min:0'],

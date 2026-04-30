@@ -113,20 +113,20 @@ const exportKms = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <Link :href="route('portal.index')">
-                    <Button variant="outline" size="icon">
-                        <ArrowLeft class="h-4 w-4" />
+                    <Button variant="ghost" size="icon" class="h-9 w-9 rounded-full">
+                        <ArrowLeft class="h-5 w-5 text-gray-600" />
                     </Button>
                 </Link>
                 <div class="flex-1">
-                    <h2 class="text-lg font-semibold">Kartu Menuju Sehat (KMS)</h2>
-                    <p class="text-sm text-muted-foreground">
+                    <h2 class="text-xl font-bold tracking-tight text-gray-900">Kartu Menuju Sehat (KMS)</h2>
+                    <p class="text-sm text-muted-foreground mt-0.5">
                         {{ pesertaType === 'ibu_hamil' ? 'Ibu Hamil' : pesertaType === 'balita' ? 'Balita' : 'Lansia' }}
                     </p>
                 </div>
-                <Button size="sm" @click="exportKms">
-                    <Download class="mr-2 h-4 w-4" />
+                <Button size="sm" @click="exportKms" class="flex items-center gap-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white">
+                    <Download class="h-4 w-4" />
                     Export PDF
                 </Button>
             </div>

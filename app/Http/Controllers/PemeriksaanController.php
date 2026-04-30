@@ -36,6 +36,10 @@ class PemeriksaanController extends Controller
             });
         }
 
+        if ($request->type && in_array($request->type, ['ibu_hamil', 'balita', 'lansia'])) {
+            $query->where('peserta_type', $request->type);
+        }
+
         $pemeriksaan = $query->paginate(10);
 
         return Inertia::render('Pemeriksaan/Index', [
@@ -46,7 +50,7 @@ class PemeriksaanController extends Controller
                 'balita_count' => \App\Models\Pemeriksaan::where('peserta_type', 'balita')->count(),
                 'lansia_count' => \App\Models\Pemeriksaan::where('peserta_type', 'lansia')->count(),
             ],
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search', 'type']),
         ]);
     }
 
@@ -102,7 +106,7 @@ class PemeriksaanController extends Controller
      */
     public function edit(string $id): Response
     {
-        $pemeriksaan = Pemeriksaan::findOrFail($id);
+        $pemeriksaan = Pemeriksaan::with(['peserta', 'jadwalPosyandu.posyandu', 'kader', 'bidan'])->findOrFail($id);
         $this->authorize('update', $pemeriksaan);
 
         return Inertia::render('Pemeriksaan/Edit', [

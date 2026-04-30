@@ -23,6 +23,8 @@ class StorePemeriksaanRequest extends FormRequest
     {
         return [
             'jadwal_posyandu_id' => ['required', 'string', 'size:26'],
+            'kader_id' => ['nullable', 'string', 'size:26'],
+            'bidan_id' => ['nullable', 'string', 'size:26'],
             'peserta_type' => ['required', 'string', 'in:ibu_hamil,balita,lansia'],
             'peserta_id' => ['required', 'string', 'size:26'],
             'tgl_pemeriksaan' => ['required', 'date'],
