@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Kader\StoreKaderRequest;
 use App\Http\Requests\Kader\UpdateKaderRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Resources\KaderResource;
 use App\Models\Kader;
 use App\Models\Posyandu;
 use App\Models\User;
 use App\Services\KaderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class KaderController extends Controller
@@ -40,9 +42,6 @@ class KaderController extends Controller
 
         return Inertia::render('Kader/Create', [
             'posyandu' => Posyandu::where('is_active', true)->get(['id', 'nama_posyandu']),
-            'available_users' => User::whereDoesntHave('kader', fn($q) => $q->withTrashed())
-                ->whereDoesntHave('bidan', fn($q) => $q->withTrashed())
-                ->get(['id', 'nama_user', 'email']),
         ]);
     }
 
@@ -91,5 +90,17 @@ class KaderController extends Controller
 
         $this->kaderService->delete($id);
         return redirect()->route('kader.index')->with('success', 'Kader berhasil dihapus.');
+    }
+
+    public function changePassword(ChangePasswordRequest $request, string $id)
+    {
+        $kader = $this->kaderService->findById($id);
+        $this->authorize('update', $kader);
+
+        // Update password di user yang terkait
+        $user = User::findOrFail($kader->user_id);
+        $user->update(['password' => Hash::make($request->validated('password'))]);
+
+        return redirect()->route('kader.index')->with('success', 'Password kader berhasil diubah.');
     }
 }

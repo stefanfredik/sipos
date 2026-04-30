@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Bidan\StoreBidanRequest;
 use App\Http\Requests\Bidan\UpdateBidanRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Resources\BidanResource;
 use App\Models\Bidan;
 use App\Models\User;
 use App\Services\BidanService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class BidanController extends Controller
@@ -37,11 +39,7 @@ class BidanController extends Controller
     {
         $this->authorize('create', Bidan::class);
 
-        return Inertia::render('Bidan/Create', [
-            'available_users' => User::whereDoesntHave('kader', fn($q) => $q->withTrashed())
-                ->whereDoesntHave('bidan', fn($q) => $q->withTrashed())
-                ->get(['id', 'nama_user', 'email']),
-        ]);
+        return Inertia::render('Bidan/Create');
     }
 
     public function store(StoreBidanRequest $request)
@@ -88,5 +86,17 @@ class BidanController extends Controller
 
         $this->bidanService->delete($id);
         return redirect()->route('bidan.index')->with('success', 'Bidan berhasil dihapus.');
+    }
+
+    public function changePassword(ChangePasswordRequest $request, string $id)
+    {
+        $bidan = $this->bidanService->findById($id);
+        $this->authorize('update', $bidan);
+
+        // Update password di user yang terkait
+        $user = User::findOrFail($bidan->user_id);
+        $user->update(['password' => Hash::make($request->validated('password'))]);
+
+        return redirect()->route('bidan.index')->with('success', 'Password bidan berhasil diubah.');
     }
 }

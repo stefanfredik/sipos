@@ -20,23 +20,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import SearchableSelect from '@/components/ui/SearchableSelect.vue';
 import { ArrowLeft, Loader2, Save } from 'lucide-vue-next';
 import { useToast } from '@/Composables/useToast';
 
-const props = defineProps<{
-    available_users: Array<{ id: string; nama_user: string; email: string }>;
-}>();
-
 const toast = useToast();
 
-const userOptions = props.available_users.map((u) => ({
-    id: u.id,
-    label: `${u.nama_user} (${u.email})`,
-}));
-
 const form = useForm({
-    user_id: '',
+    username: '',
+    password: '',
+    password_confirmation: '',
     nama_bidan: '',
     foto_bidan: null as File | null,
     alamat: '',
@@ -54,13 +46,6 @@ const submit = () => {
             toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.');
         },
     });
-};
-
-const onUserChange = (userId: string) => {
-    const selected = props.available_users.find((u) => u.id === userId);
-    if (selected) {
-        form.nama_bidan = selected.nama_user;
-    }
 };
 </script>
 
@@ -87,117 +72,176 @@ const onUserChange = (userId: string) => {
                     <CardHeader>
                         <CardTitle>Pendaftaran Bidan</CardTitle>
                         <CardDescription
-                            >Hubungkan akun user dengan data profil
-                            bidan.</CardDescription
+                            >Buat akun user dan data profil bidan baru.</CardDescription
                         >
                     </CardHeader>
                     <form @submit.prevent="submit">
                         <CardContent class="space-y-6">
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <SearchableSelect
-                                    v-model="form.user_id"
-                                    :options="userOptions"
-                                    placeholder="Pilih Akun User"
-                                    label="Pilih Akun User"
-                                    :error="form.errors.user_id"
-                                    @update:modelValue="onUserChange"
-                                />
-
-                                <div class="space-y-2">
-                                    <Label for="nama_bidan"
-                                        >Nama Lengkap (Display)</Label
-                                    >
-                                    <Input
-                                        id="nama_bidan"
-                                        v-model="form.nama_bidan"
-                                        required
-                                        :class="{
-                                            'border-destructive':
-                                                form.errors.nama_bidan,
-                                        }"
-                                    />
-                                    <p
-                                        v-if="form.errors.nama_bidan"
-                                        class="text-sm text-destructive"
-                                    >
-                                        {{ form.errors.nama_bidan }}
-                                    </p>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <Label for="no_telp">No. Telepon</Label>
-                                    <Input
-                                        id="no_telp"
-                                        v-model="form.no_telp"
-                                        required
-                                        :class="{
-                                            'border-destructive':
-                                                form.errors.no_telp,
-                                        }"
-                                    />
-                                    <p
-                                        v-if="form.errors.no_telp"
-                                        class="text-sm text-destructive"
-                                    >
-                                        {{ form.errors.no_telp }}
-                                    </p>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <Label for="jenis_kelamin"
-                                        >Jenis Kelamin</Label
-                                    >
-                                    <Select v-model="form.jenis_kelamin">
-                                        <SelectTrigger
+                            <!-- Account Information -->
+                            <div>
+                                <h3 class="mb-4 font-semibold text-sm">Informasi Akun</h3>
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div class="space-y-2">
+                                        <Label for="username">Username</Label>
+                                        <Input
+                                            id="username"
+                                            v-model="form.username"
+                                            required
                                             :class="{
                                                 'border-destructive':
-                                                    form.errors.jenis_kelamin,
+                                                    form.errors.username,
                                             }"
+                                        />
+                                        <p
+                                            v-if="form.errors.username"
+                                            class="text-sm text-destructive"
                                         >
-                                            <SelectValue
-                                                placeholder="Pilih Jenis Kelamin"
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="L"
-                                                >Laki-laki</SelectItem
-                                            >
-                                            <SelectItem value="P"
-                                                >Perempuan</SelectItem
-                                            >
-                                        </SelectContent>
-                                    </Select>
-                                    <p
-                                        v-if="form.errors.jenis_kelamin"
-                                        class="text-sm text-destructive"
-                                    >
-                                        {{ form.errors.jenis_kelamin }}
-                                    </p>
-                                </div>
+                                            {{ form.errors.username }}
+                                        </p>
+                                    </div>
 
-                                <div class="space-y-2">
-                                    <Label for="foto_bidan">Foto Profil</Label>
-                                    <Input
-                                        id="foto_bidan"
-                                        type="file"
-                                        accept="image/*"
-                                        @input="
-                                            form.foto_bidan =
-                                                (
-                                                    $event.target as HTMLInputElement
-                                                ).files?.[0] || null
-                                        "
-                                        :class="{
-                                            'border-destructive':
-                                                form.errors.foto_bidan,
-                                        }"
-                                    />
-                                    <p
-                                        v-if="form.errors.foto_bidan"
-                                        class="text-sm text-destructive"
-                                    >
-                                        {{ form.errors.foto_bidan }}
-                                    </p>
+                                    <div class="space-y-2">
+                                        <Label for="password">Password</Label>
+                                        <Input
+                                            id="password"
+                                            v-model="form.password"
+                                            type="password"
+                                            required
+                                            :class="{
+                                                'border-destructive':
+                                                    form.errors.password,
+                                            }"
+                                        />
+                                        <p
+                                            v-if="form.errors.password"
+                                            class="text-sm text-destructive"
+                                        >
+                                            {{ form.errors.password }}
+                                        </p>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <Label for="password_confirmation">Konfirmasi Password</Label>
+                                        <Input
+                                            id="password_confirmation"
+                                            v-model="form.password_confirmation"
+                                            type="password"
+                                            required
+                                            :class="{
+                                                'border-destructive':
+                                                    form.errors.password_confirmation,
+                                            }"
+                                        />
+                                        <p
+                                            v-if="form.errors.password_confirmation"
+                                            class="text-sm text-destructive"
+                                        >
+                                            {{ form.errors.password_confirmation }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Profile Information -->
+                            <div>
+                                <h3 class="mb-4 font-semibold text-sm">Informasi Profil</h3>
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div class="space-y-2">
+                                        <Label for="nama_bidan"
+                                            >Nama Lengkap</Label
+                                        >
+                                        <Input
+                                            id="nama_bidan"
+                                            v-model="form.nama_bidan"
+                                            required
+                                            :class="{
+                                                'border-destructive':
+                                                    form.errors.nama_bidan,
+                                            }"
+                                        />
+                                        <p
+                                            v-if="form.errors.nama_bidan"
+                                            class="text-sm text-destructive"
+                                        >
+                                            {{ form.errors.nama_bidan }}
+                                        </p>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <Label for="no_telp">No. Telepon</Label>
+                                        <Input
+                                            id="no_telp"
+                                            v-model="form.no_telp"
+                                            required
+                                            :class="{
+                                                'border-destructive':
+                                                    form.errors.no_telp,
+                                            }"
+                                        />
+                                        <p
+                                            v-if="form.errors.no_telp"
+                                            class="text-sm text-destructive"
+                                        >
+                                            {{ form.errors.no_telp }}
+                                        </p>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <Label for="jenis_kelamin"
+                                            >Jenis Kelamin</Label
+                                        >
+                                        <Select v-model="form.jenis_kelamin">
+                                            <SelectTrigger
+                                                :class="{
+                                                    'border-destructive':
+                                                        form.errors.jenis_kelamin,
+                                                }"
+                                            >
+                                                <SelectValue
+                                                    placeholder="Pilih Jenis Kelamin"
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="L"
+                                                    >Laki-laki</SelectItem
+                                                >
+                                                <SelectItem value="P"
+                                                    >Perempuan</SelectItem
+                                                >
+                                            </SelectContent>
+                                        </Select>
+                                        <p
+                                            v-if="form.errors.jenis_kelamin"
+                                            class="text-sm text-destructive"
+                                        >
+                                            {{ form.errors.jenis_kelamin }}
+                                        </p>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <Label for="foto_bidan">Foto Profil</Label>
+                                        <Input
+                                            id="foto_bidan"
+                                            type="file"
+                                            accept="image/*"
+                                            @input="
+                                                form.foto_bidan =
+                                                    (
+                                                        $event.target as HTMLInputElement
+                                                    ).files?.[0] || null
+                                            "
+                                            :class="{
+                                                'border-destructive':
+                                                    form.errors.foto_bidan,
+                                            }"
+                                        />
+                                        <p
+                                            v-if="form.errors.foto_bidan"
+                                            class="text-sm text-destructive"
+                                        >
+                                            {{ form.errors.foto_bidan }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 

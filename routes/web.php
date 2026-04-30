@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('posyandu', \App\Http\Controllers\PosyanduController::class)->parameters(['posyandu' => 'posyandu']);
     Route::resource('kader', \App\Http\Controllers\KaderController::class);
     Route::resource('bidan', \App\Http\Controllers\BidanController::class);
+    Route::post('bidan/{bidan}/change-password', [\App\Http\Controllers\BidanController::class, 'changePassword'])->name('bidan.change-password');
+    Route::post('kader/{kader}/change-password', [\App\Http\Controllers\KaderController::class, 'changePassword'])->name('kader.change-password');
     Route::resource('pemeriksaan', \App\Http\Controllers\PemeriksaanController::class);
     Route::resource('jadwal-posyandu', \App\Http\Controllers\JadwalPosyanduController::class);
     Route::post('jadwal-posyandu/{jadwal_posyandu}/validate', [\App\Http\Controllers\JadwalPosyanduController::class, 'validateJadwal'])->name('jadwal-posyandu.validate');

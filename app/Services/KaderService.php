@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use App\Enums\UserRole;
 use App\Repositories\Interfaces\KaderRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Hash;
 
 class KaderService extends BaseService
 {
@@ -22,6 +25,18 @@ class KaderService extends BaseService
 
     public function create(array $data)
     {
+        // Create user first
+        $user = User::create([
+            'username' => $data['username'],
+            'password' => Hash::make($data['password']),
+            'nama_user' => $data['nama_kader'],
+            'role' => UserRole::Kader,
+        ]);
+
+        // Add user_id to data and remove username/password
+        $data['user_id'] = $user->id;
+        unset($data['username'], $data['password']);
+
         if (isset($data['foto_kader'])) {
             $data['foto_kader'] = $this->fileUploadService->upload($data['foto_kader'], 'kader');
         }
@@ -32,6 +47,12 @@ class KaderService extends BaseService
     public function update(string $id, array $data)
     {
         $kader = $this->repository->findById($id);
+
+        // Update username if provided
+        if (isset($data['username'])) {
+            $kader->user->update(['username' => $data['username']]);
+            unset($data['username']);
+        }
 
         if (isset($data['foto_kader'])) {
             if ($kader->foto_kader) {

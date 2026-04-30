@@ -25,11 +25,11 @@ class JadwalBaruNotification extends Notification implements ShouldQueue
     {
         return [
             'jadwal_id' => $this->jadwal->id,
-            'posyandu_nama' => $this->jadwal->posyandu->nama,
+            'posyandu_nama' => $this->jadwal->posyandu->nama_posyandu,
             'tanggal' => $this->jadwal->tanggal->format('Y-m-d'),
-            'kader_nama' => $this->jadwal->kader?->nama ?? 'Sistem',
+            'kader_nama' => $this->jadwal->kader?->nama_kader ?? 'Sistem',
             'title' => 'Usulan Jadwal Posyandu Baru',
-            'message' => "Kader {$this->jadwal->kader?->nama} mengusulkan jadwal baru di {$this->jadwal->posyandu->nama} pada tanggal {$this->jadwal->tanggal->format('d/m/Y')}.",
+            'message' => "Kader {$this->jadwal->kader?->nama_kader} mengusulkan jadwal baru di {$this->jadwal->posyandu->nama_posyandu} pada tanggal {$this->jadwal->tanggal->format('d/m/Y')}.",
             'url' => route('jadwal-posyandu.edit', $this->jadwal->id),
         ];
     }

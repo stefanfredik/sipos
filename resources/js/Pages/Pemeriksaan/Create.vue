@@ -58,10 +58,24 @@ const props = defineProps<{
 const toast = useToast();
 
 const jadwalOptions = computed(() =>
-    props.jadwal.map((j) => ({
-        id: j.id,
-        label: `${j.tanggal} - ${j.posyandu?.nama} (${j.status})`,
-    })),
+    props.jadwal.map((j) => {
+        // Format tanggal menjadi lebih readable
+        const tanggal = new Date(j.tanggal);
+        const formattedDate = tanggal.toLocaleDateString('id-ID', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        });
+        
+        // Format status dengan label yang friendly
+        const statusLabel = j.status === 'validated' ? 'Divalidasi' : j.status === 'draft' ? 'Draft' : 'Ditolak';
+        
+        return {
+            id: j.id,
+            label: `${formattedDate} - ${j.posyandu?.nama_posyandu} (${statusLabel})`,
+        };
+    }),
 );
 
 const kaderOptions = computed(() =>

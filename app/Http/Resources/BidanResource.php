@@ -12,7 +12,7 @@ class BidanResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'nama_bidan' => $this->nama_bidan,
+            'nama' => $this->nama_bidan,
             'foto' => $this->foto_bidan ? asset('storage/' . $this->foto_bidan) : null,
             'alamat' => $this->alamat,
             'no_telp' => $this->no_telp,

@@ -27,11 +27,11 @@ class JadwalUpdateNotification extends Notification implements ShouldQueue
         
         return [
             'jadwal_id' => $this->jadwal->id,
-            'posyandu_nama' => $this->jadwal->posyandu->nama,
+            'posyandu_nama' => $this->jadwal->posyandu->nama_posyandu,
             'status' => $this->jadwal->status,
-            'bidan_nama' => $this->jadwal->bidan?->nama ?? 'Bidan',
+            'bidan_nama' => $this->jadwal->bidan?->nama_bidan ?? 'Bidan',
             'title' => "Update Jadwal Posyandu: {$statusLabel}",
-            'message' => "Jadwal di {$this->jadwal->posyandu->nama} pada {$this->jadwal->tanggal->format('d/m/Y')} telah {$statusLabel} oleh {$this->jadwal->bidan?->nama}.",
+            'message' => "Jadwal di {$this->jadwal->posyandu->nama_posyandu} pada {$this->jadwal->tanggal->format('d/m/Y')} telah {$statusLabel} oleh {$this->jadwal->bidan?->nama_bidan}.",
             'url' => route('jadwal-posyandu.edit', $this->jadwal->id),
         ];
     }

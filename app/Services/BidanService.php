@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use App\Enums\UserRole;
 use App\Repositories\Interfaces\BidanRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Hash;
 
 class BidanService extends BaseService
 {
@@ -22,6 +25,18 @@ class BidanService extends BaseService
 
     public function create(array $data)
     {
+        // Create user first
+        $user = User::create([
+            'username' => $data['username'],
+            'password' => Hash::make($data['password']),
+            'nama_user' => $data['nama_bidan'],
+            'role' => UserRole::Bidan,
+        ]);
+
+        // Add user_id to data and remove username/password
+        $data['user_id'] = $user->id;
+        unset($data['username'], $data['password']);
+
         if (isset($data['foto_bidan'])) {
             $data['foto_bidan'] = $this->fileUploadService->upload($data['foto_bidan'], 'bidan');
         }
@@ -32,6 +47,12 @@ class BidanService extends BaseService
     public function update(string $id, array $data)
     {
         $bidan = $this->repository->findById($id);
+
+        // Update username if provided
+        if (isset($data['username'])) {
+            $bidan->user->update(['username' => $data['username']]);
+            unset($data['username']);
+        }
 
         if (isset($data['foto_bidan'])) {
             if ($bidan->foto_bidan) {

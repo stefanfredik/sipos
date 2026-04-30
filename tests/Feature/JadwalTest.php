@@ -40,6 +40,7 @@ test('admin can create jadwal', function () {
         'status' => 'draft',
     ];
 
+    
     $response = $this->actingAs($admin)->post(route('jadwal-posyandu.store'), $data);
 
     $response->assertRedirect(route('jadwal-posyandu.index'));

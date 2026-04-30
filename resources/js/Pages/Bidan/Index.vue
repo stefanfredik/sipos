@@ -20,9 +20,17 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { ref, watch } from 'vue';
 import { debounce } from 'lodash';
-import { MoreHorizontal, Plus, Search, User } from 'lucide-vue-next';
+import { MoreHorizontal, Plus, Search, User, Key } from 'lucide-vue-next';
 import { useToast } from '@/Composables/useToast';
 
 interface Bidan {
@@ -41,6 +49,13 @@ const props = defineProps<{
 
 const toast = useToast();
 const search = ref(props.filters.search || '');
+const showPasswordModal = ref(false);
+const selectedBidanId = ref<string | null>(null);
+const selectedBidanNama = ref('');
+const passwordForm = ref({
+    password: '',
+    password_confirmation: '',
+});
 
 watch(
     search,
@@ -64,6 +79,46 @@ function deleteBidan(id: string) {
             },
         });
     }
+}
+
+function openChangePasswordModal(id: string, nama: string) {
+    selectedBidanId.value = id;
+    selectedBidanNama.value = nama;
+    passwordForm.value = { password: '', password_confirmation: '' };
+    showPasswordModal.value = true;
+}
+
+function submitChangePassword() {
+    if (!passwordForm.value.password || !passwordForm.value.password_confirmation) {
+        toast.error('Error', 'Semua field harus diisi.');
+        return;
+    }
+    if (passwordForm.value.password !== passwordForm.value.password_confirmation) {
+        toast.error('Error', 'Konfirmasi password tidak cocok.');
+        return;
+    }
+    if (passwordForm.value.password.length < 8) {
+        toast.error('Error', 'Password minimal 8 karakter.');
+        return;
+    }
+
+    router.post(
+        route('bidan.change-password', { bidan: selectedBidanId.value || '' }),
+        {
+            password: passwordForm.value.password,
+            password_confirmation: passwordForm.value.password_confirmation,
+        },
+        {
+            onSuccess: () => {
+                toast.success('Berhasil', 'Password bidan berhasil diubah.');
+                showPasswordModal.value = false;
+                passwordForm.value = { password: '', password_confirmation: '' };
+            },
+            onError: () => {
+                toast.error('Gagal', 'Terjadi kesalahan saat mengubah password.');
+            },
+        }
+    );
 }
 </script>
 
@@ -178,6 +233,12 @@ function deleteBidan(id: string) {
                                             "
                                             >Edit Data</DropdownMenuItem
                                         >
+                                        <DropdownMenuItem
+                                            @click="openChangePasswordModal(item.id, item.nama)"
+                                        >
+                                            <Key class="mr-2 h-4 w-4" />
+                                            Ganti Password
+                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             class="text-destructive"
@@ -222,4 +283,49 @@ function deleteBidan(id: string) {
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <!-- Change Password Modal -->
+    <Dialog v-model:open="showPasswordModal">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Ganti Password Bidan</DialogTitle>
+                <DialogDescription>
+                    Ubah password untuk: <span class="font-medium">{{ selectedBidanNama }}</span>
+                </DialogDescription>
+            </DialogHeader>
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <Label for="password">Password Baru</Label>
+                    <Input
+                        id="password"
+                        v-model="passwordForm.password"
+                        type="password"
+                        placeholder="Minimal 8 karakter"
+                    />
+                </div>
+                <div class="space-y-2">
+                    <Label for="password_confirmation">Konfirmasi Password</Label>
+                    <Input
+                        id="password_confirmation"
+                        v-model="passwordForm.password_confirmation"
+                        type="password"
+                        placeholder="Ulangi password"
+                    />
+                </div>
+            </div>
+            <div class="flex justify-end gap-2">
+                <Button
+                    variant="outline"
+                    @click="showPasswordModal = false"
+                >
+                    Batal
+                </Button>
+                <Button
+                    @click="submitChangePassword"
+                >
+                    Ubah Password
+                </Button>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
