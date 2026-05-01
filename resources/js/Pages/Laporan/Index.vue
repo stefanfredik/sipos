@@ -73,6 +73,10 @@ function doExport(action: string, extra: Record<string, string> = {}) {
     document.body.appendChild(form); form.submit(); document.body.removeChild(form)
 }
 
+function printPage() {
+    window.print()
+}
+
 function getPesertaTypeLabel(type: string) {
     return { ibu_hamil: 'Ibu Hamil', balita: 'Balita', lansia: 'Lansia' }[type] ?? type
 }
@@ -99,7 +103,7 @@ const statCards = [
                     <p class="text-sm text-muted-foreground mt-0.5">{{ selectedBulanLabel }} {{ filterState.tahun }}</p>
                 </div>
                 <div class="flex gap-2 print:hidden">
-                    <Button variant="outline" size="sm" @click="window.print()" class="flex items-center gap-2 rounded-lg">
+                    <Button variant="outline" size="sm" @click="printPage()" class="flex items-center gap-2 rounded-lg">
                         <Printer class="h-4 w-4" /> Cetak
                     </Button>
                     <Button variant="outline" size="sm" @click="doExport('laporan.export.pdf')" class="flex items-center gap-2 rounded-lg">
