@@ -20,8 +20,8 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('posyandu.store'), {
-        onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil ditambahkan.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.'),
+        
+        
     });
 };
 </script>

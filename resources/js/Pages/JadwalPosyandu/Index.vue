@@ -62,8 +62,8 @@ function openDeleteDialog(id: string) {
 function deleteJadwal() {
     if (!deleteTarget.value) return;
     router.delete(route('jadwal-posyandu.destroy', deleteTarget.value), {
-        onSuccess: () => { toast.success('Berhasil', 'Jadwal berhasil dihapus.'); deleteTarget.value = null; },
-        onError: () => { toast.error('Gagal', 'Terjadi kesalahan saat menghapus jadwal.'); deleteTarget.value = null; },
+        onSuccess: () => {  deleteTarget.value = null; },
+        onError: () => {  deleteTarget.value = null; },
     });
 }
 

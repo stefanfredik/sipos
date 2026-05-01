@@ -22,8 +22,8 @@ const form = useForm({
 const submit = () => {
     form.post(route('balita.store'), {
         forceFormData: true,
-        onSuccess: () => toast.success('Berhasil', 'Data balita berhasil ditambahkan.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.'),
+        
+        
     });
 };
 </script>

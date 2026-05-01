@@ -74,7 +74,9 @@ function doExport(action: string, extra: Record<string, string> = {}) {
 }
 
 function printPage() {
-    window.print()
+    if (typeof window !== 'undefined') {
+        (window as any).print();
+    }
 }
 
 function getPesertaTypeLabel(type: string) {

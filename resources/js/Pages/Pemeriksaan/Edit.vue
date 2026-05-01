@@ -154,11 +154,11 @@ const form = useForm({
 const submit = () => {
     form.put(route('pemeriksaan.update', data.id), {
         onSuccess: () => {
-            toast.success('Berhasil', 'Data pemeriksaan berhasil diperbarui.');
+            
             router.get(route('pemeriksaan.index'));
         },
         onError: () => {
-            toast.error('Gagal', 'Terjadi kesalahan saat memperbarui data.');
+            
         },
     });
 };

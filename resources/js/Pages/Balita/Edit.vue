@@ -36,8 +36,8 @@ const form = useForm({
 const submit = () => {
     form.post(route('balita.update', { balita: d.id }), {
         forceFormData: true,
-        onSuccess: () => toast.success('Berhasil', 'Data balita berhasil diperbarui.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat memperbarui data.'),
+        
+        
     });
 };
 </script>

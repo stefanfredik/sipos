@@ -37,8 +37,8 @@ const form = useForm({
 const submit = () => {
     form.post(route('ibu-hamil.update', d.id), {
         forceFormData: true,
-        onSuccess: () => toast.success('Berhasil', 'Data ibu hamil berhasil diperbarui.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat memperbarui data.'),
+        
+        
     });
 };
 </script>

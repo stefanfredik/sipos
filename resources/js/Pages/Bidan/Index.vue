@@ -69,23 +69,23 @@ function openPasswordModal(id: string, nama: string) {
 
 function submitChangePassword() {
     if (!passwordForm.value.password || !passwordForm.value.password_confirmation) {
-        toast.error('Error', 'Semua field harus diisi.'); return;
+         return;
     }
     if (passwordForm.value.password !== passwordForm.value.password_confirmation) {
-        toast.error('Error', 'Konfirmasi password tidak cocok.'); return;
+         return;
     }
     if (passwordForm.value.password.length < 8) {
-        toast.error('Error', 'Password minimal 8 karakter.'); return;
+         return;
     }
     router.post(route('bidan.change-password', { bidan: selectedBidanId.value || '' }), {
         password: passwordForm.value.password,
         password_confirmation: passwordForm.value.password_confirmation,
     }, {
         onSuccess: () => {
-            toast.success('Berhasil', 'Password bidan berhasil diubah.');
+            
             showPasswordModal.value = false;
         },
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat mengubah password.'),
+        
     });
 }
 </script>

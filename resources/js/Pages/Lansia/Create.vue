@@ -21,8 +21,8 @@ const form = useForm({
 const submit = () => {
     form.post(route('lansia.store'), {
         forceFormData: true,
-        onSuccess: () => toast.success('Berhasil', 'Data lansia berhasil ditambahkan.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.'),
+        
+        
     });
 };
 </script>

@@ -36,8 +36,8 @@ function handleFoto(e: Event) {
 const submit = () => {
     form.post(route('kader.store'), {
         forceFormData: true,
-        onSuccess: () => toast.success('Berhasil', 'Data kader berhasil ditambahkan.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.'),
+        
+        
     });
 };
 </script>

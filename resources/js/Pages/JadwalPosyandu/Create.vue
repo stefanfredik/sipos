@@ -36,8 +36,8 @@ if (currentKader) form.kader_id = currentKader.id;
 
 const submit = () => {
     form.post(route('jadwal-posyandu.store'), {
-        onSuccess: () => toast.success('Berhasil', 'Jadwal posyandu berhasil dibuat.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan jadwal.'),
+        
+        
     });
 };
 </script>

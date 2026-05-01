@@ -22,8 +22,8 @@ const form = useForm({
 const submit = () => {
     form.post(route('ibu-hamil.store'), {
         forceFormData: true,
-        onSuccess: () => toast.success('Berhasil', 'Data ibu hamil berhasil ditambahkan.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.'),
+        
+        
     });
 };
 </script>

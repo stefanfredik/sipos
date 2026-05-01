@@ -24,7 +24,7 @@ const toast = useToast();
 
 const deletePosyandu = () => {
     router.delete(route('posyandu.destroy', { posyandu: props.posyandu.id }), {
-        onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil dihapus.'),
+        
     });
 };
 

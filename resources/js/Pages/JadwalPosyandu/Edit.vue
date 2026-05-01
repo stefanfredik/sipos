@@ -48,8 +48,8 @@ if (isBidan && !form.bidan_id) {
 
 const submit = () => {
     form.put(route('jadwal-posyandu.update', props.jadwal.data.id), {
-        onSuccess: () => toast.success('Berhasil', 'Jadwal berhasil diperbarui.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan perubahan.'),
+        
+        
     });
 };
 

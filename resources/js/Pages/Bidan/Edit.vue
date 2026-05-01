@@ -43,8 +43,8 @@ function handleFoto(e: Event) {
 const submit = () => {
     form.post(route('bidan.update', props.bidan.id), {
         forceFormData: true,
-        onSuccess: () => toast.success('Berhasil', 'Data bidan berhasil diperbarui.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.'),
+        
+        
     });
 };
 </script>

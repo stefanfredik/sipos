@@ -34,8 +34,8 @@ const form = useForm({
 const submit = () => {
     form.put(route('posyandu.update', props.posyandu.id), {
         preserveScroll: true,
-        onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil diperbarui.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menyimpan perubahan.'),
+        
+        
     });
 };
 </script>

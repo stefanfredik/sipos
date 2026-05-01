@@ -189,11 +189,11 @@ const selectCategory = (type: 'ibu_hamil' | 'balita' | 'lansia') => {
 const submit = () => {
     form.post(route('pemeriksaan.store'), {
         onSuccess: () => {
-            toast.success('Berhasil', 'Data pemeriksaan berhasil disimpan.');
+            
             router.get(route('pemeriksaan.index'));
         },
         onError: () => {
-            toast.error('Gagal', 'Terjadi kesalahan saat menyimpan data.');
+            
         },
     });
 };
