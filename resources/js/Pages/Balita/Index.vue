@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ref, watch, computed } from 'vue';
 import { MoreHorizontal, Plus, Search, User, Eye, Edit, Trash2, Baby, Users, HeartPulse } from 'lucide-vue-next';
 import { useToast } from '@/Composables/useToast';
@@ -24,6 +25,7 @@ const props = defineProps<{
 
 const toast = useToast();
 const search = ref(props.filters?.search ?? '');
+const deleteTarget = ref<string | null>(null);
 const totalAktif = computed(() => props.balita.data.filter(i => i.is_active).length);
 
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -34,13 +36,16 @@ watch(search, () => {
     }, 400);
 });
 
-function deleteBalita(id: string) {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-        router.delete(route('balita.destroy', { balita: id }), {
-            onSuccess: () => toast.success('Berhasil', 'Data balita berhasil dihapus.'),
-            onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
-        });
-    }
+function confirmDelete(id: string) { deleteTarget.value = id; }
+
+function deleteBalita() {
+    const id = deleteTarget.value;
+    if (!id) return;
+    deleteTarget.value = null;
+    router.delete(route('balita.destroy', { balita: id }), {
+        onSuccess: () => toast.success('Berhasil', 'Data balita berhasil dihapus.'),
+        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
+    });
 }
 </script>
 
@@ -149,7 +154,7 @@ function deleteBalita(id: string) {
                                                 <Edit class="h-4 w-4 text-gray-400" /> Edit Data
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem class="text-destructive flex items-center gap-2 focus:text-destructive" @click="deleteBalita(item.id)">
+                                            <DropdownMenuItem class="text-destructive flex items-center gap-2 focus:text-destructive" @click="confirmDelete(item.id)">
                                                 <Trash2 class="h-4 w-4" /> Hapus
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -191,4 +196,17 @@ function deleteBalita(id: string) {
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <AlertDialog :open="!!deleteTarget" @update:open="(v) => { if (!v) deleteTarget = null }">
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Hapus Data Balita</AlertDialogTitle>
+                <AlertDialogDescription>Tindakan ini tidak dapat dibatalkan. Data balita akan dihapus secara permanen dari sistem.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <Button @click="deleteBalita" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</Button>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
 </template>

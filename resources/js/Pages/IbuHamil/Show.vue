@@ -87,7 +87,7 @@ function deleteIbuHamil() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                                <AlertDialogAction @click="deleteIbuHamil" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</AlertDialogAction>
+                                <Button @click="deleteIbuHamil" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</Button>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>

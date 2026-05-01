@@ -13,6 +13,7 @@ import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem,
     DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ref, watch } from 'vue';
 import {
     MoreHorizontal, Plus, Search, MapPin,
@@ -35,6 +36,7 @@ const props = defineProps<{
 
 const toast = useToast();
 const search = ref(props.filters?.search ?? '');
+const deleteTarget = ref<string | null>(null);
 
 let searchTimer: ReturnType<typeof setTimeout> | null = null;
 watch(search, () => {
@@ -44,13 +46,16 @@ watch(search, () => {
     }, 400);
 });
 
-function deletePosyandu(id: string) {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-        router.delete(route('posyandu.destroy', { posyandu: id }), {
-            onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil dihapus.'),
-            onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
-        });
-    }
+function confirmDelete(id: string) { deleteTarget.value = id; }
+
+function deletePosyandu() {
+    const id = deleteTarget.value;
+    if (!id) return;
+    deleteTarget.value = null;
+    router.delete(route('posyandu.destroy', { posyandu: id }), {
+        onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil dihapus.'),
+        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
+    });
 }
 </script>
 
@@ -195,7 +200,7 @@ function deletePosyandu(id: string) {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 class="text-destructive flex items-center gap-2 focus:text-destructive"
-                                                @click="deletePosyandu(item.id)"
+                                                @click="confirmDelete(item.id)"
                                             >
                                                 <Trash2 class="h-4 w-4" /> Hapus
                                             </DropdownMenuItem>
@@ -251,4 +256,17 @@ function deletePosyandu(id: string) {
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <AlertDialog :open="!!deleteTarget" @update:open="(v) => { if (!v) deleteTarget = null }">
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Hapus Data Posyandu</AlertDialogTitle>
+                <AlertDialogDescription>Tindakan ini tidak dapat dibatalkan. Data posyandu akan dihapus secara permanen dari sistem.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <Button @click="deletePosyandu" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</Button>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
 </template>

@@ -423,7 +423,7 @@ function formatTensi(item: Pemeriksaan) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel @click="deleteTarget = null">Batal</AlertDialogCancel>
-                    <AlertDialogAction @click="deletePemeriksaan" class="bg-destructive hover:bg-destructive/90">Hapus</AlertDialogAction>
+                    <Button @click="deletePemeriksaan" class="bg-destructive hover:bg-destructive/90">Hapus</Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

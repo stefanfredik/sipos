@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { ArrowLeft, Edit, Trash2, MapPin, Info, Calendar, Building2, ChevronRight } from 'lucide-vue-next';
 import { useToast } from '@/Composables/useToast';
 
@@ -22,11 +23,9 @@ const props = defineProps<{
 const toast = useToast();
 
 const deletePosyandu = () => {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-        router.delete(route('posyandu.destroy', { posyandu: props.posyandu.id }), {
-            onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil dihapus.'),
-        });
-    }
+    router.delete(route('posyandu.destroy', { posyandu: props.posyandu.id }), {
+        onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil dihapus.'),
+    });
 };
 
 const formatDate = (dateStr: string) => {
@@ -70,14 +69,27 @@ const formatDate = (dateStr: string) => {
                         <Edit class="h-4 w-4" />
                         Edit Data
                     </Button>
-                    <Button
-                        variant="outline"
-                        @click="deletePosyandu"
-                        class="flex items-center gap-2 rounded-lg border-red-200 text-red-600 hover:bg-red-50"
-                    >
-                        <Trash2 class="h-4 w-4" />
-                        Hapus
-                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger as-child>
+                            <Button
+                                variant="outline"
+                                class="flex items-center gap-2 rounded-lg border-red-200 text-red-600 hover:bg-red-50"
+                            >
+                                <Trash2 class="h-4 w-4" />
+                                Hapus
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Hapus Data Posyandu</AlertDialogTitle>
+                                <AlertDialogDescription>Tindakan ini tidak dapat dibatalkan. Data posyandu akan dihapus secara permanen dari sistem.</AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Batal</AlertDialogCancel>
+                                <Button @click="deletePosyandu" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </template>

@@ -87,7 +87,7 @@ function deleteLansia() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                                <AlertDialogAction @click="deleteLansia" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</AlertDialogAction>
+                                <Button @click="deleteLansia" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</Button>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>

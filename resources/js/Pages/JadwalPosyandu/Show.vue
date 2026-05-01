@@ -109,7 +109,7 @@ function deleteJadwal() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Batal</AlertDialogCancel>
-                                <AlertDialogAction @click="deleteJadwal">Hapus</AlertDialogAction>
+                                <Button @click="deleteJadwal" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Hapus</Button>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>

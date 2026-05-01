@@ -261,7 +261,7 @@ function countStatus(s: string) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel @click="deleteTarget = null">Batal</AlertDialogCancel>
-                    <AlertDialogAction @click="deleteJadwal" class="bg-destructive hover:bg-destructive/90">Hapus</AlertDialogAction>
+                    <Button @click="deleteJadwal" class="bg-destructive hover:bg-destructive/90">Hapus</Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
