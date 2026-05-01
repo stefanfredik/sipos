@@ -51,10 +51,14 @@ function confirmDelete(id: string) { deleteTarget.value = id; }
 function deletePosyandu() {
     const id = deleteTarget.value;
     if (!id) return;
-    deleteTarget.value = null;
     router.delete(route('posyandu.destroy', { posyandu: id }), {
-        onSuccess: () => toast.success('Berhasil', 'Data posyandu berhasil dihapus.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
+        preserveScroll: true,
+        onSuccess: () => {
+            deleteTarget.value = null;
+        },
+        onError: () => {
+            deleteTarget.value = null;
+        }
     });
 }
 </script>

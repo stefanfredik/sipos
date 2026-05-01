@@ -96,8 +96,8 @@ function confirmDelete(id: string) {
 function deletePemeriksaan() {
     if (!deleteTarget.value) return;
     router.delete(route('pemeriksaan.destroy', deleteTarget.value), {
-        onSuccess: () => { toast.success('Berhasil', 'Data pemeriksaan berhasil dihapus.'); deleteTarget.value = null; },
-        onError: () => { toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'); deleteTarget.value = null; },
+        preserveScroll: true,
+        onFinish: () => { deleteTarget.value = null; }
     });
 }
 

@@ -40,10 +40,14 @@ function confirmDelete(id: string) { deleteTarget.value = id; }
 function deleteLansia() {
     const id = deleteTarget.value;
     if (!id) return;
-    deleteTarget.value = null;
     router.delete(route('lansia.destroy', { lansia: id }), {
-        onSuccess: () => toast.success('Berhasil', 'Data lansia berhasil dihapus.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
+        preserveScroll: true,
+        onSuccess: () => {
+            deleteTarget.value = null;
+        },
+        onError: () => {
+            deleteTarget.value = null;
+        }
     });
 }
 </script>

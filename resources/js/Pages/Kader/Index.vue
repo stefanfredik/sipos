@@ -50,10 +50,14 @@ function confirmDelete(id: string) { deleteTarget.value = id; }
 function deleteKader() {
     const id = deleteTarget.value;
     if (!id) return;
-    deleteTarget.value = null;
     router.delete(route('kader.destroy', id), {
-        onSuccess: () => toast.success('Berhasil', 'Data kader berhasil dihapus.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
+        preserveScroll: true,
+        onSuccess: () => {
+            deleteTarget.value = null;
+        },
+        onError: () => {
+            deleteTarget.value = null;
+        }
     });
 }
 

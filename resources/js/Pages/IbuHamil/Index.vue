@@ -48,10 +48,14 @@ function confirmDelete(id: string) { deleteTarget.value = id; }
 function deleteIbuHamil() {
     const id = deleteTarget.value;
     if (!id) return;
-    deleteTarget.value = null;
     router.delete(route('ibu-hamil.destroy', id), {
-        onSuccess: () => toast.success('Berhasil', 'Data ibu hamil berhasil dihapus.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
+        preserveScroll: true,
+        onSuccess: () => {
+            deleteTarget.value = null;
+        },
+        onError: () => {
+            deleteTarget.value = null;
+        }
     });
 }
 </script>

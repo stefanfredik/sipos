@@ -49,10 +49,14 @@ function confirmDelete(id: string) { deleteTarget.value = id; }
 function deleteBidan() {
     const id = deleteTarget.value;
     if (!id) return;
-    deleteTarget.value = null;
     router.delete(route('bidan.destroy', id), {
-        onSuccess: () => toast.success('Berhasil', 'Data bidan berhasil dihapus.'),
-        onError: () => toast.error('Gagal', 'Terjadi kesalahan saat menghapus data.'),
+        preserveScroll: true,
+        onSuccess: () => {
+            deleteTarget.value = null;
+        },
+        onError: () => {
+            deleteTarget.value = null;
+        }
     });
 }
 

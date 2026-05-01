@@ -66,7 +66,6 @@ import {
     IdCard,
 } from 'lucide-vue-next';
 import { Badge } from '@/components/ui/badge';
-import { Toaster } from '@/components/ui/sonner';
 
 const page = usePage();
 const user = computed(() => (page.props as any).auth?.user);
@@ -84,8 +83,10 @@ watch(
     (message) => {
         if (message) {
             toast.success('Berhasil', message);
+            (page.props as any).flash.success = null;
         }
     },
+    { immediate: true }
 );
 
 watch(
@@ -93,8 +94,10 @@ watch(
     (message) => {
         if (message) {
             toast.error('Gagal', message);
+            (page.props as any).flash.error = null;
         }
     },
+    { immediate: true }
 );
 
 watch(
@@ -102,8 +105,10 @@ watch(
     (status) => {
         if (status) {
             toast.info('Info', status);
+            (page.props as any).status = null;
         }
     },
+    { immediate: true }
 );
 
 // Helper to get user initials
@@ -634,5 +639,4 @@ function renderMenuItem(item: NavItem) {
             </main>
         </SidebarInset>
     </SidebarProvider>
-    <Toaster position="top-right" />
 </template>
